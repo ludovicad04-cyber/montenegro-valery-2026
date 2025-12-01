@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadtrip in Montenegro - 6 Giorni Ottimizzati</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha2014-zcbZ+P7MD4h7V74F7W7x7/45+K/9W+A7e7O00K+G2/7N+T7f3Y/027A" 
+          crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Stili Generali e Reset */
+        :root {
+            --color-primary: #C2799B; /* Rosa pastello scuro */
+            --color-secondary: #9B7BB8; /* Lavanda scura */
+            --color-accent: #7FB069; /* Verde menta scuro */
+            --color-pink: #E8A5AA; /* Rosa medio */
+            --color-purple: #B8A9DC; /* Lavanda media */
+            --color-bg: linear-gradient(135deg, #F0C5D1 0%, #D4C5F9 50%, #C5E8E5 100%);
+            --font-family: 'Fredoka', cursive;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #F0C5D1 0%, #D4C5F9 50%, #C5E8E5 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease-out;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+            font-family: var(--font-family);
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .loading-title {
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .loading-subtitle {
+            font-size: 1.2em;
+            font-weight: 300;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+
+        /* Car Animation */
+        .car-container {
+            width: 400px;
+            height: 120px;
+            position: relative;
+            margin: 0 auto 40px auto;
+        }
+
+        .road {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            position: absolute;
+            bottom: 35px;
+            overflow: hidden;
+        }
+
+        .road-line {
+            width: 100%;
+            height: 2px;
+            background-image: repeating-linear-gradient(
+                to right,
+                rgba(100, 100, 100, 0.8) 0px,
+                rgba(100, 100, 100, 0.8) 15px,
+                transparent 15px,
+                transparent 30px
+            );
+            position: absolute;
+            top: 3px;
+            animation: roadMove 2s linear infinite;
+        }
+
+        .car {
+            width: 80px;
+            height: 40px;
+            position: absolute;
+            bottom: 43px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: carBounce 1s ease-in-out infinite;
+        }
+
+        .car-body {
+            width: 80px;
+            height: 35px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            border-radius: 20px 20px 8px 8px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .car-window {
+            width: 35px;
+            height: 20px;
+            background: rgba(135, 206, 235, 0.9);
+            border-radius: 10px;
+            position: absolute;
+            top: 5px;
+            left: 25px;
+        }
+
+        .wheel {
+            width: 18px;
+            height: 18px;
+            background: #2c3e50;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -9px;
+            animation: wheelSpin 0.8s linear infinite;
+            border: 3px solid #34495e;
+        }
+
+        .wheel.front {
+            right: 10px;
+        }
+
+        .wheel.back {
+            left: 10px;
+        }
+
+        /* Floating Elements */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 1.5em;
+            animation: gentleFloat 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 15%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 25%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 25%;
+            left: 25%;
+            animation-delay: 4s;
+        }
+
+        .floating-element:nth-child(4) {
+            bottom: 15%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 250px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            border-radius: 3px;
+            width: 0;
+            animation: progress 3s ease-out;
+        }
+
+        /* Main Content */
+        body {
+            font-family: var(--font-family);
+            background: var(--color-bg);
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Animations */
+        @keyframes carBounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        @keyframes wheelSpin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes roadMove {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-30px);
+            }
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-15px);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes progress {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Header e Dettagli Principali */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #E8A5AA 0%, #B8A9DC 100%);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.1) 1deg, transparent 2deg);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.4em;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .trip-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 25px 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 15px;
+            min-width: 140px;
+            background: white;
+            border-radius: 15px;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .detail-title {
+            font-size: 1em;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        /* Sezione Itinerario e Mappa */
+        .itinerary-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .itinerary-header {
+            text-align: center;
+            padding: 15px 0 20px;
+            border-bottom: 2px solid var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        .itinerary-header h2 {
+            font-size: 1.8em;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+        }
+
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+
+        /* Stili custom per i popup della mappa */
+        .custom-popup .leaflet-popup-content {
+            margin: 8px;
+            padding: 0;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Stile Card Giorno */
+        .day-card {
+            border: none;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-pink), var(--color-accent));
+        }
+        
+        .day-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-secondary);
+        }
+
+        .day-number {
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .day-number.day-1 {
+            background: linear-gradient(135deg, #E91E63, #E91E63dd); /* Rosa vibrante */
+        }
+
+        .day-number.day-2 {
+            background: linear-gradient(135deg, #FF9800, #FF9800dd); /* Arancione */
+        }
+
+        .day-number.day-3 {
+            background: linear-gradient(135deg, #FFC107, #FFC107dd); /* Giallo dorato */
+        }
+
+        .day-number.day-4 {
+            background: linear-gradient(135deg, #4CAF50, #4CAF50dd); /* Verde */
+        }
+
+        .day-number.day-5 {
+            background: linear-gradient(135deg, #2196F3, #2196F3dd); /* Blu */
+        }
+
+        .day-number.day-6 {
+            background: linear-gradient(135deg, #9C27B0, #9C27B0dd); /* Viola */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .day-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .location {
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .activities {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .activities li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95em;
+        }
+
+        .activities li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+            font-weight: bold;
+        }
+        
+        .info-box {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .travel-info {
+            background-color: #eaf6ff; 
+            border: 1px solid #cce5ff; 
+            color: #004085;
+        }
+
+        .accommodation {
+            background-color: #fff3cd; 
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        
+        /* Media Queries per la Responsività */
+        @media (max-width: 768px) {
+            .loading-content { padding: 15px; }
+            .loading-title { font-size: 1.8em; }
+            .loading-subtitle { font-size: 0.9em; margin-bottom: 25px; }
+            .car-container { width: 280px; height: 90px; }
+            .car-body { width: 55px; height: 26px; }
+            .car-window { width: 22px; height: 13px; left: 16px; }
+            .wheel { width: 12px; height: 12px; }
+            .progress-container { width: 180px; }
+            
+            h1 { font-size: 2em; }
+            .subtitle { font-size: 1.1em; }
+            
+            .header { padding: 25px 15px; margin-bottom: 20px; }
+            
+            .trip-details { 
+                flex-direction: column; 
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            .detail-item { 
+                padding: 15px;
+                margin: 8px 0;
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .itinerary-section { padding: 20px 15px; }
+            .itinerary-header h2 { font-size: 1.5em; }
+            
+            #map { height: 350px; }
+            
+            .day-card { padding: 20px 15px; margin-bottom: 15px; }
+            .day-header { 
+                flex-direction: row;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            .day-number { 
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+                margin-right: 15px;
+                margin-bottom: 0;
+            }
+            .day-title { 
+                font-size: 1em;
+                line-height: 1.3;
+                flex: 1;
+                min-width: 200px;
+            }
+            
+            .container { padding: 0 10px; }
+            
+            /* Miglioramenti per la sezione introduttiva */
+            .intro-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            .intro-card {
+                padding: 15px !important;
+            }
+            .intro-quote {
+                padding: 15px !important;
+                font-size: 0.9em !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .loading-title { font-size: 1.6em; }
+            .car-container { width: 250px; height: 80px; }
+            h1 { font-size: 1.8em; }
+            .day-title { font-size: 0.95em; min-width: 180px; }
+            .day-header { flex-direction: column; align-items: flex-start; }
+            .day-number { margin-bottom: 10px; margin-right: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="floating-elements">
+            <div class="floating-element">✨</div>
+            <div class="floating-element">🎁</div>
+            <div class="floating-element">💝</div>
+            <div class="floating-element">⭐</div>
+        </div>
+        
+        <div class="loading-content">
+            <h1 class="loading-title">Preparando la tua sorpresa...</h1>
+            <p class="loading-subtitle">Un regalo speciale ti sta aspettando 💕</p>
+            
+            <div class="car-container">
+                <div class="road">
+                    <div class="road-line"></div>
+                </div>
+                <div class="car">
+                    <div class="car-body">
+                        <div class="car-window"></div>
+                        <div class="wheel front"></div>
+                        <div class="wheel back"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent" style="opacity: 0;">
+        <div class="container">
+        
+        <header class="header">
+            <h1>Roadtrip in Montenegro</h1>
+            <p class="subtitle">6 Giorni alla scoperta della "Perla dei Balcani"</p>
+        </header>
+
+        <!-- Sezione Introduttiva -->
+        <section style="background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 25px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); margin-bottom: 30px; backdrop-filter: blur(10px);">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h2 style="color: var(--color-primary); font-size: 1.8em; margin-bottom: 15px; font-family: var(--font-family);">Perché il Montenegro? 💎</h2>
+            </div>
+            
+            <div class="intro-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div class="intro-card" style="background: linear-gradient(135deg, #FFE4E1, #FFF0F5); padding: 20px; border-radius: 15px; text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🏔️</div>
+                    <h3 style="color: #333; font-size: 1.1em; margin-bottom: 8px; font-family: var(--font-family);">Natura Mozzafiato</h3>
+                    <p style="color: #666; font-size: 0.9em; line-height: 1.4;">Dalle vette alpine alle baie turchesi, tutto in pochi chilometri</p>
+                </div>
+                
+                <div class="intro-card" style="background: linear-gradient(135deg, #E1F5FE, #F0F8FF); padding: 20px; border-radius: 15px; text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🏛️</div>
+                    <h3 style="color: #333; font-size: 1.1em; margin-bottom: 8px; font-family: var(--font-family);">Storia Millenaria</h3>
+                    <p style="color: #666; font-size: 0.9em; line-height: 1.4;">Città UNESCO, fortezze medievali e tradizioni autentiche</p>
+                </div>
+                
+                <div class="intro-card" style="background: linear-gradient(135deg, #E8F5E8, #F1F8E9); padding: 20px; border-radius: 15px; text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🍷</div>
+                    <h3 style="color: #333; font-size: 1.1em; margin-bottom: 8px; font-family: var(--font-family);">Sapori Unici</h3>
+                    <p style="color: #666; font-size: 0.9em; line-height: 1.4;">Vini locali, pesce di lago e cucina mediterranea autentica</p>
+                </div>
+            </div>
+            
+            <div class="intro-quote" style="background: linear-gradient(135deg, #FFF8DC, #FFFACD); padding: 20px; border-radius: 15px; text-align: center;">
+                <p style="color: #333; font-size: 1em; line-height: 1.6; margin: 0; font-style: italic; font-family: var(--font-family);">
+                    "Il Montenegro è come un libro di fiabe geografiche: ogni pagina rivela paesaggi che sembrano dipinti, 
+                    ma sono incredibilmente reali. In soli 6 giorni vivremo un'avventura che spazia dal mare cristallino 
+                    alle montagne selvagge, dai borghi medievali alle moderne scoperte enogastronomiche." ✨
+                </p>
+            </div>
+        </section>
+
+        <section class="trip-details">
+            <div class="detail-item">
+                <div class="detail-title">📅 Date</div>
+                <div class="detail-value">1 - 6 Aprile 2026</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-title">⏳ Durata</div>
+                <div class="detail-value">6 Giorni / 5 Notti</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-title">📍 Pernottamenti</div>
+                <div class="detail-value">Kotor (3) + Budva (2)</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-title">🚗 Distanza Stimata</div>
+                <div class="detail-value">~550 km</div>
+            </div>
+        </section>
+
+        <section class="itinerary-section">
+            <div class="itinerary-header">
+                <h2>Il nostro percorso</h2>
+            </div>
+            
+            <div id="map"></div>
+
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #E91E63, #E91E63dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 1 - Arrivo</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #FF9800, #FF9800dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 2 - Vino</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #FFC107, #FFC107dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 3 - Perast</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #4CAF50, #4CAF50dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 4 - Lovćen</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #2196F3, #2196F3dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 5 - Lago</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #9C27B0, #9C27B0dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 6 - Partenza</span>
+                </div>
+            </div>
+
+            <div class="info-box travel-info" style="margin-bottom: 25px;">
+                🚗 <strong>Percorso Totale:</strong> Podgorica → Kotor (3 notti) → Budva (2 notti) → Podgorica
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-1">1</div>
+                    <div class="day-title">Mercoledì 1 Aprile - Arrivo e Primo Assaggio di Kotor</div>
+                </div>
+                <div class="location">Podgorica ➜ Kotor (90 km, 1 ora e 30 minuti)</div>
+                <ul class="activities">
+                    <li>Arrivo all'aeroporto di Podgorica e ritiro dell'auto a noleggio</li>
+                    <li>Viaggio panoramico verso Kotor attraverso le montagne montenegrine</li>
+                    <li>Check-in in hotel e primo momento di relax</li>
+                    <li>Passeggiata serale nel centro storico di Kotor (Patrimonio UNESCO)</li>
+                    <li>Cena in un ristorante tipico locale</li>
+                </ul>
+                <div class="info-box accommodation">
+                    Pernottamento a Kotor per le prossime 3 notti
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-2">2</div>
+                    <div class="day-title">Giovedì 2 Aprile - Herceg Novi & Degustazione Vini</div>
+                </div>
+                <div class="location">Kotor ➜ Herceg Novi (30 km, 45 minuti)</div>
+                <ul class="activities">
+                    <li>Visita del Forte Kanli Kula con vista panoramica sulla baia</li>
+                    <li>Passeggiata nel centro storico di Herceg Novi</li>
+                    <li>Pranzo sul lungomare con specialità locali</li>
+                    <li>Degustazione vini presso la rinomata Savina Winery 🍷</li>
+                    <li>Rientro a Kotor nel tardo pomeriggio</li>
+                </ul>
+                <div class="info-box travel-info">
+                    Giornata dedicata alla scoperta della costa occidentale della baia e ai sapori locali.
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-3">3</div>
+                    <div class="day-title">Venerdì 3 Aprile - Perast e Nostra Signora delle Rocce</div>
+                </div>
+                <div class="location">Kotor ➜ Perast (14 km, 20m)</div>
+                <ul class="activities">
+                    <li>Esplorazione del borgo barocco di Perast.</li>
+                    <li>Escursione in barca all'isola artificiale Our Lady of the Rocks (€5-10/persona).</li>
+                    <li>Pranzo con vista sulle Bocche di Cattaro.</li>
+                    <li>Pomeriggio: Salita parziale alle mura di Kotor (Fortezza di San Giovanni) per il tramonto.</li>
+                </ul>
+            </div>
+            
+            <div class="day-card" style="border-left: 5px solid #4CAF50;">
+                <div class="day-header">
+                    <div class="day-number day-4">4</div>
+                    <div class="day-title">Sabato 4 Aprile - Lovćen e Trasferimento a Budva ⭐</div>
+                </div>
+                <div class="location">Kotor ➜ Lovćen ➜ Cetinje ➜ Budva (circa 70 km)</div>
+                <ul class="activities">
+                    <li>Check-out da Kotor e partenza con i bagagli</li>
+                    <li>Guida panoramica sulla famosa strada P1 con i suoi 25 tornanti</li>
+                    <li>Visita al Mausoleo di Njegoš (1.761 m) per una vista mozzafiato a 360°</li>
+                    <li>Breve sosta a Cetinje, l'antica capitale reale del Montenegro</li>
+                    <li>Tappa fotografica all'iconica Sveti Stefan</li>
+                    <li>Arrivo e check-in a Budva</li>
+                </ul>
+                <div class="info-box accommodation">
+                    Pernottamento a Budva per le prossime 2 notti
+                </div>
+            </div>
+            
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-5">5</div>
+                    <div class="day-title">Domenica 5 Aprile - Lago Skadar e Vini di Godinje</div>
+                </div>
+                <div class="location">Budva ➜ Lago Skadar (70 km, 1 ora e 15 minuti)</div>
+                <ul class="activities">
+                    <li>Visita al punto panoramico di Pavlova Strana per la vista "ferro di cavallo"</li>
+                    <li>Escursione in barca sul Lago di Skadar, il più grande dei Balcani</li>
+                    <li>Pranzo con specialità di pesce di lago in ristorante tradizionale</li>
+                    <li>Tour e degustazione di vini Vranac nella regione vinicola di Godinje</li>
+                    <li>Rientro a Budva in serata</li>
+                </ul>
+                <div class="info-box travel-info">
+                    Giornata immersi nella natura del parco nazionale e tra i vigneti montenegrini.
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-6">6</div>
+                    <div class="day-title">Lunedì 6 Aprile - Arrivederci Montenegro</div>
+                </div>
+                <div class="location">Budva ➜ Podgorica (65 km, 1 ora e 10 minuti)</div>
+                <ul class="activities">
+                    <li>Colazione rilassante a Budva con vista mare</li>
+                    <li>Check-out dall'hotel e ultimi acquisti di souvenir</li>
+                    <li>Trasferimento all'aeroporto di Podgorica (partenza entro le 12:00)</li>
+                    <li>Riconsegna dell'auto a noleggio</li>
+                    <li>Volo di rientro alle ore 15:20</li>
+                </ul>
+                <div class="info-box travel-info">
+                    Fine di un'avventura indimenticabile tra mare, montagne e tradizioni montenegrine.
+                </div>
+            </div>
+
+        </section>
+        
+        <footer style="text-align: center; padding: 30px 0; font-size: 1em; color: rgba(255,255,255,0.8); background: none;">
+            💝 Creato con amore per Valery 💝
+        </footer>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha2014-zcbZ+P7MD4h7V74F7W7x7/45+K/9W+A7e7O00K+G2/7N+T7f3Y/027A"
+            crossorigin=""></script>
+    <script>
+        // Loading Screen Management
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const mainContent = document.getElementById('mainContent');
+                
+                loadingScreen.classList.add('hidden');
+                mainContent.style.opacity = '1';
+                mainContent.style.transition = 'opacity 1.5s ease-in';
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }, 3500); // Loading per 3.5 secondi
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Funzione per ottenere il colore del giorno
+            function getDayColor(day) {
+                const colors = {
+                    1: '#E91E63', // Rosa vibrante - Arrivo
+                    2: '#FF9800', // Arancione - Herceg Novi & Vino
+                    3: '#FFC107', // Giallo dorato - Perast
+                    4: '#4CAF50', // Verde - Lovćen (giorno ottimizzato)
+                    5: '#2196F3', // Blu - Lago Skadar
+                    6: '#9C27B0'  // Viola - Partenza
+                };
+                return colors[day] || '#C2799B';
+            }
+
+            // Coordinate delle tappe principali con immagini
+            const stops = [
+                { 
+                    name: "Podgorica (Inizio)", 
+                    lat: 42.378, 
+                    lng: 19.255, 
+                    day: 1, 
+                    info: "Arrivo e ritiro auto",
+                    image: "https://cdn.getyourguide.com/image/format=auto,fit=crop,gravity=auto,quality=60,width=450,height=450,dpr=2/tour_img/eed27c2e7872e67037ab93473bc7c0779c59789598e18ca70e277d904124f704.jpg"
+                },
+                { 
+                    name: "Kotor (Base)", 
+                    lat: 42.424, 
+                    lng: 18.771, 
+                    day: 1, 
+                    info: "Pernottamento (3 Notti)",
+                    image: "https://static2-viaggi.corriereobjects.it/wp-content/uploads/2022/10/Apertura-iStock-951469758-ok.jpg.webp?v=1666977327"
+                },
+                { 
+                    name: "Herceg Novi", 
+                    lat: 42.455, 
+                    lng: 18.535, 
+                    day: 2, 
+                    info: "Visita e Cantina Savina",
+                    image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/9d/1a/58/caption.jpg?w=300&h=300&s=1"
+                },
+                { 
+                    name: "Perast", 
+                    lat: 42.483, 
+                    lng: 18.692, 
+                    day: 3, 
+                    info: "Nostra Signora delle Rocce",
+                    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLgrVlOv-wgtsIJV6SBQbV9gVZ3i9dKBLEbQ&s"
+                },
+                { 
+                    name: "Lovćen", 
+                    lat: 42.395, 
+                    lng: 18.847, 
+                    day: 4, 
+                    info: "Mausoleo di Njegoš",
+                    image: "https://t1.gstatic.com/licensed-image?q=tbn:ANd9GcQaoxdVOpBLK7WXbWXgzYV55IrmR6OHXC_GxanY-gCe8BN7nhTR0gcLxLXdfh33wBy_e5JarMLz6yPw4PcD"
+                },
+                { 
+                    name: "Cetinje", 
+                    lat: 42.384, 
+                    lng: 18.924, 
+                    day: 4, 
+                    info: "Capitale Reale",
+                    image: "https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/Cetinje-istock.jpg?v=1710778917"
+                },
+                { 
+                    name: "Sveti Stefan", 
+                    lat: 42.256, 
+                    lng: 18.895, 
+                    day: 4, 
+                    info: "Tappa Fotografica",
+                    image: "https://img1.advisor.travel/1314x680px-Sveti_Stefan_27.jpg"
+                },
+                { 
+                    name: "Budva (Base)", 
+                    lat: 42.285, 
+                    lng: 18.848, 
+                    day: 4, 
+                    info: "Pernottamento (2 Notti)",
+                    image: "https://cdn.getyourguide.com/image/format=auto,fit=contain,gravity=center,quality=60,width=1440,height=650,dpr=1/tour_img/65f6c813fd64112e643c92daa775eb4e46e06d354a39c50fb2db5f02ae9c47f8.jpeg"
+                },
+                { 
+                    name: "Lago Skadar", 
+                    lat: 42.336, 
+                    lng: 19.123, 
+                    day: 5, 
+                    info: "Pavlova Strana & Giro in barca",
+                    image: "https://mybestplace.com/uploads/2021/06/Lago-di-Skadar-Montenegro-COVER.jpg"
+                },
+                { 
+                    name: "Podgorica (Fine)", 
+                    lat: 42.354, 
+                    lng: 19.279, 
+                    day: 6, 
+                    info: "Riconsegna auto e Partenza",
+                    image: "https://cdn.getyourguide.com/image/format=auto,fit=crop,gravity=auto,quality=60,width=450,height=450,dpr=2/tour_img/eed27c2e7872e67037ab93473bc7c0779c59789598e18ca70e277d904124f704.jpg"
+                }
+            ];
+
+            // Inizializzazione della Mappa
+            const map = L.map('map').setView([42.39, 18.9], 9);
+
+            // Aggiunta del Tile Layer (Mappe OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Aggiunta dei Marcatori e Popup con immagini
+            stops.forEach(stop => {
+                const dayColor = getDayColor(stop.day);
+                const marker = L.marker([stop.lat, stop.lng], {
+                    // Crea un'icona personalizzata per il numero del giorno
+                    icon: L.divIcon({
+                        className: 'custom-icon',
+                        html: `<div style="background: linear-gradient(135deg, ${dayColor}, ${dayColor}dd); color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-family: 'Fredoka', cursive;">${stop.day}</div>`,
+                        iconSize: [35, 35],
+                        iconAnchor: [17.5, 35]
+                    })
+                }).addTo(map);
+
+                // Popup con immagine e stile migliorato
+                const popupContent = `
+                    <div style="text-align: center; font-family: 'Fredoka', cursive; min-width: 200px;">
+                        <img src="${stop.image}" alt="${stop.name}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+                        <div style="background: ${dayColor}; color: white; padding: 4px 12px; border-radius: 15px; display: inline-block; margin-bottom: 8px; font-weight: 600;">Giorno ${stop.day}</div>
+                        <h4 style="margin: 0 0 8px 0; color: #333; font-size: 1em; font-weight: 500;">${stop.name}</h4>
+                        <p style="margin: 0; color: #666; font-size: 0.9em; line-height: 1.4;">${stop.info}</p>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent, {
+                    maxWidth: 250,
+                    className: 'custom-popup'
+                });
+            });
+
+            // Definizione dei punti per la Linea di Percorso (Roadtrip)
+            const routeCoordinates = [
+                [stops[0].lat, stops[0].lng], // Podgorica Start
+                [stops[1].lat, stops[1].lng], // Kotor
+                [stops[2].lat, stops[2].lng], // Herceg Novi
+                [stops[1].lat, stops[1].lng], // Ritorno a Kotor
+                [stops[3].lat, stops[3].lng], // Perast
+                [stops[1].lat, stops[1].lng], // Ritorno a Kotor
+                [stops[4].lat, stops[4].lng], // Lovćen
+                [stops[5].lat, stops[5].lng], // Cetinje
+                [stops[6].lat, stops[6].lng], // Sveti Stefan
+                [stops[7].lat, stops[7].lng], // Budva
+                [stops[8].lat, stops[8].lng], // Lago Skadar
+                [stops[7].lat, stops[7].lng], // Ritorno a Budva
+                [stops[9].lat, stops[9].lng]  // Podgorica End
+            ];
+
+            // Disegno della linea di percorso (Polyline) con colore leggibile
+            L.polyline(routeCoordinates, {
+                color: '#C2799B', 
+                weight: 4, 
+                opacity: 0.8, 
+                dashArray: '8, 5' // Linea tratteggiata per il roadtrip
+            }).addTo(map);
+        });
+    </script>
+</body>
+</html>
