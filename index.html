@@ -55,17 +55,19 @@
 
         .falling-item {
             position: absolute;
+            color: #ffd700;
             font-size: 2rem;
-            opacity: 0.6;
             pointer-events: none;
+            z-index: 2;
+            will-change: transform, opacity;
         }
 
         .falling-item:nth-child(odd) {
-            animation: fallDown 8s linear infinite;
+            animation: fallDown 8s linear;
         }
 
         .falling-item:nth-child(even) {
-            animation: fallDownSlow 12s linear infinite;
+            animation: fallDownSlow 12s linear;
         }
 
         .loading-screen.hidden {
@@ -591,35 +593,23 @@
         }
 
         @keyframes fallDown {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 0.7;
-            }
-            10% {
+            from {
+                transform: translateY(-100px) rotate(0deg);
                 opacity: 0.8;
             }
-            90% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
+            to {
+                transform: translateY(calc(100vh + 200px)) rotate(720deg);
                 opacity: 0;
             }
         }
 
         @keyframes fallDownSlow {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 0.6;
+            from {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0.8;
             }
-            10% {
-                opacity: 0.7;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(100vh) rotate(180deg);
+            to {
+                transform: translateY(calc(100vh + 200px)) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -774,8 +764,7 @@
         
         <div class="loading-content">
             <h1 class="loading-title">CIAO VALERY 🧝‍♀️</h1>
-            <p class="loading-subtitle">Gli elfi di Babbo Natale stanno preparando</p>
-            <p class="loading-subtitle" style="margin-top: -15px; font-size: 1.8rem; color: var(--green-bright);">LA TUA AVVENTURA MAGICA ✨</p>
+            <p class="loading-subtitle">Gli elfi di Babbo Natale stanno preparando il tuo regalo</p>
             
             <div class="car-container">
                 <div class="road">
@@ -1054,9 +1043,18 @@
                 const item = document.createElement('div');
                 item.className = 'falling-item';
                 item.textContent = items[Math.floor(Math.random() * items.length)];
-                item.style.left = Math.random() * 100 + '%';
-                item.style.animationDelay = Math.random() * 2 + 's';
-                item.style.animationDuration = (8 + Math.random() * 8) + 's';
+                item.style.left = Math.random() * 95 + '%';
+                item.style.top = '-100px';
+                item.style.position = 'absolute';
+                item.style.fontSize = '2rem';
+                item.style.zIndex = '2';
+                
+                const duration = 8 + Math.random() * 8;
+                const delay = Math.random() * 2;
+                
+                item.style.animationDelay = delay + 's';
+                item.style.animationDuration = duration + 's';
+                
                 fallingContainer.appendChild(item);
                 
                 // Rimuovi l'elemento dopo l'animazione
@@ -1064,7 +1062,7 @@
                     if (item.parentNode) {
                         item.parentNode.removeChild(item);
                     }
-                }, 20000);
+                }, (duration + delay + 2) * 1000);
             }
             
             // Crea items ogni 500ms per 55 secondi
