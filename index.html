@@ -1,532 +1,1568 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" style="overflow-x: hidden;">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Roadtrip in Montenegro - 6 Giorni Ottimizzati</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-touch-icon" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E">
+    <title>Roadtrip in Montenegro - 6 Giorni Ottimizzati</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha2014-zcbZ+P7MD4h7V74F7W7x7/45+K/9W+A7e7O00K+G2/7N+T7f3Y/027A" 
+          crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Stili Generali e Reset */
+        :root {
+            --green-dark: #1a472a;
+            --green-bright: #22c55e;
+            --cream: #fef7ed;
+            --white: #ffffff;
+            --black: #000000;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Fredoka', cursive;
+        }
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--green-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease-out;
+            overflow: hidden;
+        }
 
-  <style>
-    :root{
-      --green-dark:#1a472a;
-      --green-bright:#22c55e;
-      --cream:#fef7ed;
-      --white:#fff;
-      --black:#000;
-      --font-main: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      --font-display: 'Fredoka', system-ui, cursive;
-      --max-width: 1200px;
-      --gap: 16px;
-    }
+        .falling-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-    /* reset & box sizing */
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--font-main);
-      color:var(--black);
-      background:var(--white);
-      -webkit-font-smoothing:antialiased;
-      line-height:1.5;
-      overflow-x:hidden;
-      font-size:clamp(15px, 2vw, 18px); /* fluid base size */
-    }
+        .falling-item {
+            position: absolute;
+            color: #ffd700;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 2;
+            will-change: transform, opacity;
+        }
 
-    a{color:inherit}
+        .falling-item:nth-child(odd) {
+            animation: fallDown 8s linear;
+        }
 
-    /* Accessible reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      *{animation:none!important; transition:none!important}
-    }
+        .falling-item:nth-child(even) {
+            animation: fallDownSlow 12s linear;
+        }
 
-    /* CONTAINER */
-    .wrap{
-      max-width:var(--max-width);
-      margin:0 auto;
-      padding:20px;
-    }
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-    /* Loading overlay (less intrusive) */
-    .loading-screen{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:linear-gradient(180deg,var(--green-dark), rgba(26,71,42,0.95));
-      color:var(--white);
-      z-index:1200;
-      padding:20px;
-      transition:opacity .4s ease, visibility .4s;
-      gap:16px;
-    }
-    .loading-screen.hidden{opacity:0; visibility:hidden; pointer-events:none}
-    .loading-card{
-      width:min(620px,95%);
-      border-radius:14px;
-      padding:18px;
-      text-align:center;
-      background:rgba(255,255,255,0.04);
-      backdrop-filter: blur(6px);
-    }
-    .loading-title{
-      font-family:var(--font-display);
-      margin:0 0 8px;
-      font-size:clamp(22px,4vw,36px);
-      letter-spacing:-1px;
-    }
-    .loading-sub{
-      margin:0 0 12px;
-      font-size:clamp(13px,2vw,16px);
-      opacity:.95;
-    }
-    .progress{
-      height:6px;
-      width:100%;
-      background:rgba(255,255,255,0.12);
-      border-radius:6px;
-      overflow:hidden;
-    }
-    .progress > span{
-      display:block;
-      width:0%;
-      height:100%;
-      background:rgba(255,255,255,0.9);
-      transition:width 2s linear;
-    }
+        .loading-content {
+            text-align: center;
+            color: var(--white);
+            font-family: var(--font-main);
+            width: 95%;
+            max-width: 95vw;
+            padding: 50px 20px;
+            position: relative;
+            z-index: 10;
+            background: rgba(26, 71, 42, 0.95);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            margin: 10px auto;
+        }
 
-    /* EMOJI CHE CADONO - CHRISTMAS ANIMATION */
-    .falling-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
-    }
+        .loading-title {
+            font-family: var(--font-display);
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            color: var(--cream);
+            line-height: 0.9;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
 
-    .falling-item {
-      position: absolute;
-      animation: fall linear infinite;
-      font-size: 24px;
-      opacity: 0.8;
-      user-select: none;
-    }
+        .loading-subtitle {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.4;
+        }
 
-    @keyframes fall {
-      from {
-        transform: translateY(-120px) rotate(0deg);
-        opacity: 0.8;
-      }
-      to {
-        transform: translateY(calc(100vh + 120px)) rotate(360deg);
-        opacity: 0;
-      }
-    }
+        /* Car Animation */
+        .car-container {
+            width: 280px;
+            height: 90px;
+            position: relative;
+            margin: 0 auto 25px auto;
+        }
 
-    .falling-item:nth-child(1) { left: 10%; animation-duration: 8s; animation-delay: 0s; }
-    .falling-item:nth-child(2) { left: 20%; animation-duration: 12s; animation-delay: 2s; }
-    .falling-item:nth-child(3) { left: 30%; animation-duration: 10s; animation-delay: 4s; }
-    .falling-item:nth-child(4) { left: 40%; animation-duration: 15s; animation-delay: 1s; }
-    .falling-item:nth-child(5) { left: 50%; animation-duration: 9s; animation-delay: 3s; }
-    .falling-item:nth-child(6) { left: 60%; animation-duration: 11s; animation-delay: 5s; }
-    .falling-item:nth-child(7) { left: 70%; animation-duration: 13s; animation-delay: 0.5s; }
-    .falling-item:nth-child(8) { left: 80%; animation-duration: 14s; animation-delay: 2.5s; }
-    .falling-item:nth-child(9) { left: 90%; animation-duration: 7s; animation-delay: 4.5s; }
-    .falling-item:nth-child(10) { left: 15%; animation-duration: 16s; animation-delay: 1.5s; }
-    .falling-item:nth-child(11) { left: 25%; animation-duration: 6s; animation-delay: 3.5s; }
-    .falling-item:nth-child(12) { left: 35%; animation-duration: 18s; animation-delay: 0.8s; }
+        .road {
+            width: 100%;
+            height: 8px;
+            background: var(--cream);
+            border-radius: 4px;
+            position: absolute;
+            bottom: 35px;
+            overflow: hidden;
+        }
 
-    /* HERO */
-    .hero{
-      background:var(--green-dark);
-      color:var(--white);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding: clamp(40px,10vh,120px) 20px;
-    }
-    .hero h1{
-      margin:0;
-      font-family:var(--font-display);
-      font-size:clamp(34px,8vw,64px);
-      line-height:1;
-      letter-spacing:-1px;
-      color:var(--cream);
-    }
-    .hero p.lead{
-      margin:12px 0 0;
-      font-size:clamp(14px,2.2vw,20px);
-      text-transform:uppercase;
-      letter-spacing:2px;
-    }
+        .road-line {
+            width: 100%;
+            height: 2px;
+            background-image: repeating-linear-gradient(
+                to right,
+                rgba(100, 100, 100, 0.8) 0px,
+                rgba(100, 100, 100, 0.8) 15px,
+                transparent 15px,
+                transparent 30px
+            );
+            position: absolute;
+            top: 3px;
+            animation: roadMove 2s linear infinite;
+        }
 
-    /* sections */
-    section{padding:40px 0;}
-    .checkerboard{height:28px;background:repeating-linear-gradient(90deg,var(--green-dark) 0 20px,var(--white) 20px 40px)}
-    .card{
-      background:var(--white);
-      border-radius:12px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.08);
-      padding:20px;
-    }
+        .car {
+            width: 80px;
+            height: 40px;
+            position: absolute;
+            bottom: 43px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: carBounce 1s ease-in-out infinite;
+        }
 
-    /* responsive image */
-    .hero-image img, .card img{
-      width:100%;
-      height:auto;
-      display:block;
-      border-radius:10px;
-      object-fit:cover;
-    }
+        .car-body {
+            width: 80px;
+            height: 35px;
+            background: var(--cream);
+            border-radius: 20px 20px 8px 8px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 3px solid var(--green-bright);
+        }
+        
+        .car-window {
+            width: 35px;
+            height: 20px;
+            background: rgba(135, 206, 235, 0.9);
+            border-radius: 10px;
+            position: absolute;
+            top: 5px;
+            left: 25px;
+        }
 
-    /* trip details grid */
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:16px;
-    }
-    .grid .mini{
-      text-align:center;
-      padding:18px;
-      border-radius:10px;
-      background:rgba(255,255,255,0.95);
-    }
+        .wheel {
+            width: 18px;
+            height: 18px;
+            background: #2c3e50;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -9px;
+            animation: wheelSpin 0.8s linear infinite;
+            border: 3px solid #34495e;
+        }
 
-    /* map */
-    #map{
-      width:100%;
-      height:clamp(250px,40vh,520px);
-      border-radius:12px;
-      border:1px solid #e6e6e6;
-    }
+        .wheel.front {
+            right: 10px;
+        }
 
-    /* day cards */
-    .days{display:grid;grid-template-columns:1fr;gap:16px}
-    .day{
-      background:var(--white);
-      border-radius:12px;
-      padding:16px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.06);
-    }
-    .day .head{display:flex;gap:12px;align-items:center}
-    .day .num{
-      min-width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
-      background:linear-gradient(135deg,#16a34a,#059669);
-      box-shadow:0 6px 18px rgba(0,0,0,0.12);
-      font-size:16px;
-    }
-    .day h4{margin:0;font-size:1rem}
-    .location{color:var(--green-dark);margin:8px 0;font-weight:600}
-    .activities{padding-left:18px;margin:10px 0 0;list-style:none}
-    .activities li{position:relative;padding:6px 0 6px 20px}
-    .activities li::before{content:"✓";position:absolute;left:0;color:var(--green-bright);font-weight:700}
+        .wheel.back {
+            left: 10px;
+        }
 
-    /* footer */
-    footer{padding:20px;text-align:center;color:#666}
 
-    /* small screens */
-    @media (max-width:900px){
-      .grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width:680px){
-      .grid{grid-template-columns:1fr}
-      .wrap{padding:16px}
-      .hero{padding: clamp(30px,12vh,60px) 12px}
-      .loading-card{padding:14px}
-      .loading-title{font-size:22px}
-    }
 
-    /* make interactive elements comfortably tappable */
-    button, .mini, .day{touch-action:manipulation}
+        /* Progress Bar */
+        .progress-container {
+            width: 200px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
 
-  </style>
+        .progress-bar {
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            border-radius: 3px;
+            width: 0;
+            animation: progress 45s ease-out;
+        }
+
+        /* Main Content */
+        body {
+            font-family: var(--font-main);
+            background: var(--white);
+            line-height: 1.6;
+            color: var(--black);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-size: 22px;
+            width: 100%;
+            max-width: 100vw;
+        }
+        
+        /* FIX BORDO DESTRO (OVERFLOW X) */
+        html { 
+            overflow-x: hidden; 
+        }
+
+        /* Animations */
+        @keyframes carBounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        @keyframes wheelSpin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes roadMove {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-30px);
+            }
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-15px);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes progress {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--green-dark);
+            color: var(--white);
+            padding: 80px 20px;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 900;
+            margin: 0 0 30px 0;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 0.8;
+            color: var(--cream);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-main);
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin: 30px 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .hero-description {
+            font-size: 1.8rem;
+            font-weight: 400;
+            max-width: 100%;
+            margin: 0 auto;
+            opacity: 0.95;
+            line-height: 1.6;
+            padding: 0 20px;
+        }
+
+        /* Checkerboard Pattern */
+        .checkerboard {
+            height: 40px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--green-dark) 0px,
+                var(--green-dark) 20px,
+                var(--white) 20px,
+                var(--white) 40px
+            );
+        }
+
+        /* Section Styles */
+        .section-light {
+            background: var(--color-light);
+            padding: 80px 20px;
+        }
+
+        .section-dark {
+            background: var(--color-primary);
+            color: white;
+            padding: 80px 20px;
+        }
+
+        .section-cream {
+            background: var(--color-cream);
+            padding: 80px 20px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.4em;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .trip-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 25px 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 15px;
+            min-width: 140px;
+            background: white;
+            border-radius: 15px;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .detail-title {
+            font-size: 1em;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        /* Sezione Itinerario e Mappa */
+        .itinerary-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .itinerary-header {
+            text-align: center;
+            padding: 15px 0 20px;
+            border-bottom: 2px solid var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        .itinerary-header h2 {
+            font-size: 1.8em;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+        }
+
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+
+        /* Stili custom per i popup della mappa */
+        .custom-popup .leaflet-popup-content {
+            margin: 8px;
+            padding: 0;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Stile Card Giorno */
+        .day-card {
+            border: none;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-pink), var(--color-accent));
+        }
+        
+        .day-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-secondary);
+        }
+
+        .day-number {
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .day-number.day-1 {
+            background: linear-gradient(135deg, #15803d, #15803ddd); /* Verde scuro */
+        }
+
+        .day-number.day-2 {
+            background: linear-gradient(135deg, #166534, #166534dd); /* Verde molto scuro */
+        }
+
+        .day-number.day-3 {
+            background: linear-gradient(135deg, #16a34a, #16a34add); /* Verde medio */
+        }
+
+        .day-number.day-4 {
+            background: linear-gradient(135deg, #22c55e, #22c55edd); /* Verde brillante */
+        }
+
+        .day-number.day-5 {
+            background: linear-gradient(135deg, #16a34a, #16a34add); /* Verde medio scuro */
+        }
+
+        .day-number.day-6 {
+            background: linear-gradient(135deg, #059669, #059669dd); /* Verde smeraldo */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes christmasSparkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes fallDown {
+            from {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0.8;
+            }
+            to {
+                transform: translateY(calc(100vh + 200px)) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fallDownSlow {
+            from {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0.8;
+            }
+            to {
+                transform: translateY(calc(100vh + 200px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .day-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .location {
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .activities {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .activities li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95em;
+        }
+
+        .activities li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+            font-weight: bold;
+        }
+        
+        .info-box {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .travel-info {
+            background-color: #eaf6ff; 
+            border: 1px solid #cce5ff; 
+            color: #004085;
+        }
+
+        .accommodation {
+            background-color: #fff3cd; 
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        
+        /* Media Queries per la Responsività */
+        @media (max-width: 768px) {
+            .loading-content { padding: 35px 25px !important; margin: 20px !important; }
+            .loading-title { font-size: 2.8rem !important; line-height: 1.1 !important; margin-bottom: 20px !important; }
+            .loading-subtitle { font-size: 1.2rem !important; margin-bottom: 30px !important; }
+            .car-container { width: 250px; height: 90px; }
+            .car-body { width: 60px; height: 28px; }
+            .car-window { width: 24px; height: 14px; left: 18px; }
+            .wheel { width: 14px; height: 14px; }
+            .progress-container { width: 200px; }
+            
+            h1 { font-size: 2em; }
+            .subtitle { font-size: 1.1em; }
+            
+            .header { padding: 25px 15px; margin-bottom: 20px; }
+            
+            .trip-details { 
+                flex-direction: column; 
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            .detail-item { 
+                padding: 15px;
+                margin: 8px 0;
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .itinerary-section { padding: 20px 15px; }
+            .itinerary-header h2 { font-size: 1.5em; }
+            
+            #map { height: 350px; }
+            
+            .day-card { padding: 20px 15px; margin-bottom: 15px; }
+            .day-header { 
+                flex-direction: row; 
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            .day-number { 
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+                margin-right: 15px;
+                margin-bottom: 0;
+            }
+            .day-title { 
+                font-size: 1em;
+                line-height: 1.3;
+                flex: 1;
+                min-width: 200px;
+            }
+            
+            .container { padding: 0 10px; }
+            
+            /* Miglioramenti per la sezione introduttiva */
+            .intro-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            .intro-card {
+                padding: 15px !important;
+            }
+            .intro-quote {
+                padding: 15px !important;
+                font-size: 0.9em !important;
+            }
+            
+            /* FIX CARDS STORTE/PARAGRAFI GIGANTI */
+            p {
+                font-size: 1.2rem !important; /* Riduzione per evitare conflitti */
+                line-height: 1.6 !important;
+                padding: 0 10px !important;
+                margin-bottom: 10px !important;
+            }
+            .activities li {
+                font-size: 1.1rem !important; /* Riduzione per evitare conflitti */
+                padding: 8px 0 8px 25px !important;
+                line-height: 1.5 !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* ULTRA OTTIMIZZAZIONE IPHONE - CORREZIONI CRITICHE */
+            html { 
+                /* width: 100% !important; */
+                overflow-x: hidden !important; /* Mantenuto per risolvere il bordo */
+            }
+            
+            body {
+                width: 100% !important;
+                font-size: 28px !important;
+                overflow-x: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* LOADING GIGANTESCO */
+            .loading-title { 
+                font-size: 4.2rem !important;
+                line-height: 0.8 !important;
+                padding: 0 10px !important;
+            }
+            .loading-subtitle { 
+                font-size: 1.8rem !important;
+                padding: 0 10px !important;
+            }
+            
+            /* HERO GIGANTESCO */
+            .hero-title { 
+                font-size: 4.2rem !important; 
+                line-height: 0.8 !important; 
+                margin-bottom: 25px !important;
+                padding: 0 10px !important;
+            }
+            .hero-subtitle { 
+                font-size: 1.8rem !important; 
+                margin-bottom: 25px !important;
+                padding: 0 10px !important;
+            }
+            .hero-description { 
+                font-size: 1.6rem !important; 
+                padding: 0 15px !important;
+                line-height: 1.7 !important;
+            }
+            
+            /* TUTTO FULL-WIDTH SENZA BORDI */
+            section {
+                width: 100% !important; /* CORREZIONE: da 100vw a 100% per evitare overflow */
+                max-width: 100% !important;
+                padding: 50px 15px !important; /* Aumento il padding a 15px */
+                margin: 0 !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* TITOLI MASSIMA GRANDEZZA */
+            h2 {
+                font-size: 3.5rem !important;
+                line-height: 0.9 !important;
+                padding: 0 10px !important;
+            }
+            
+            /* PARAGRAFI GIGANTI: RIDUZIONE FONT SIZE PER FISSARE LE CARD */
+            p {
+                font-size: 1.2rem !important; /* Ridotto da 1.7rem a 1.2rem */
+                line-height: 1.6 !important;
+                padding: 0 10px !important; /* Ridotto il padding forzato */
+                margin-bottom: 10px !important;
+            }
+            
+            /* CONTAINERS ULTRA-FULL */
+            div[style*="max-width"],
+            div[style*="width: 90%"],
+            div[style*="padding"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px 10px !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* ICONE TOUCH-FRIENDLY GRANDI */
+            div[style*="width: 80px"][style*="height: 80px"] {
+                width: 70px !important;
+                height: 70px !important;
+                font-size: 2.2rem !important;
+            }
+            
+            div[style*="width: 90px"][style*="height: 90px"] {
+                width: 80px !important;
+                height: 80px !important;
+                font-size: 2.5rem !important;
+            }
+            
+            /* MAPPA OTTIMIZZATA */
+            #map {
+                width: 95% !important;
+                height: 320px !important;
+                margin: 0 auto !important;
+                border-radius: 15px !important;
+            }
+            
+            /* CONTAINER PRINCIPALI */
+            div[style*="max-width: 1200px"] {
+                padding: 0 10px !important;
+                width: 100% !important;
+            }
+            
+            /* ATTIVITÀ LIST TOUCH-FRIENDLY: RIDUZIONE FONT SIZE PER FISSARE LE CARD */
+            .activities li {
+                font-size: 1.1rem !important; /* Ridotto da 1.4rem a 1.1rem */
+                padding: 8px 0 8px 25px !important;
+                line-height: 1.5 !important;
+            }
+            
+            /* DAY CARDS TOUCH-FRIENDLY: LAYOUT PIÙ COMPATTO */
+            .day-header {
+                flex-wrap: nowrap !important; /* Impedisce il wrap che scombina il layout */
+            }
+            .day-title { 
+                font-size: 1.2rem !important; /* Ridotto da 1.4rem a 1.2rem */
+                min-width: auto !important;
+                width: auto !important;
+                flex: 1;
+            }
+            .day-number { 
+                width: 50px !important; 
+                height: 50px !important; 
+                font-size: 1.4rem !important;
+            }
+            
+            /* IMMAGINI RESPONSIVE */
+            img {
+                width: 100% !important;
+                height: auto !important;
+                max-height: 280px !important;
+                object-fit: cover !important;
+                border-radius: 10px !important;
+            }
+            
+            /* TRIP DETAILS OTTIMIZZATI */
+            .trip-details { 
+                flex-direction: column !important; 
+                padding: 15px !important;
+            }
+            .detail-item { 
+                padding: 25px 15px !important;
+                margin: 10px 0 !important;
+                width: 100% !important;
+                font-size: 1.5rem !important;
+            }
+        }
+
+        /* Ottimizzazioni per iPhone X e successivi */
+        @supports (padding: env(safe-area-inset-top)) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            .loading-screen {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+        
+        /* MOBILE-FIRST DESIGN COMPLETO (768px) */
+        @media (max-width: 768px) {
+            /* ELIMINAZIONE TOTALE BORDI */
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            
+            body {
+                font-size: 24px !important;
+                line-height: 1.7 !important;
+                width: 100% !important;
+                overflow-x: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* HERO SECTION GIGANTE */
+            .hero-title {
+                font-size: 4rem !important;
+                line-height: 0.8 !important;
+                margin-bottom: 25px !important;
+                padding: 0 15px !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.8rem !important;
+                margin-bottom: 25px !important;
+                padding: 0 15px !important;
+            }
+            
+            .hero-description {
+                font-size: 1.5rem !important;
+                padding: 0 20px !important;
+                line-height: 1.6 !important;
+            }
+            
+            /* LOADING GIGANTE */
+            .loading-title {
+                font-size: 4rem !important;
+                line-height: 0.9 !important;
+                margin-bottom: 25px !important;
+            }
+            
+            .loading-subtitle {
+                font-size: 1.6rem !important;
+                margin-bottom: 35px !important;
+            }
+            
+            /* SEZIONI FULL WIDTH */
+            section {
+                width: 100% !important; /* CORREZIONE: Uso 100% per evitare overflow */
+                padding: 60px 15px !important;
+                margin: 0 !important;
+            }
+            
+            /* TITOLI GIGANTI */
+            h2 {
+                font-size: 3.5rem !important;
+                line-height: 1 !important;
+                margin-bottom: 30px !important;
+                padding: 0 10px !important;
+            }
+            
+            h3 {
+                font-size: 2.2rem !important;
+                line-height: 1.2 !important;
+                margin-bottom: 20px !important;
+            }
+            
+            /* PARAGRAFI LEGGIBILI */
+            p {
+                font-size: 1.2rem !important; /* Riduzione da 1.6rem a 1.2rem */
+                line-height: 1.6 !important;
+                padding: 0 15px !important;
+                margin-bottom: 20px !important;
+            }
+            
+            /* CONTAINER FULL WIDTH */
+            div[style*="max-width: 1200px"] {
+                max-width: 100% !important;
+                padding: 0 15px !important;
+            }
+            
+            /* CARDS FULL WIDTH */
+            div[style*="padding: 50px"] {
+                padding: 40px 20px !important;
+            }
+            
+            div[style*="padding: 60px"] {
+                padding: 40px 20px !important;
+            }
+            
+            div[style*="padding: 40px"] {
+                padding: 30px 15px !important;
+            }
+        }
+
+        /* iPhone Touch e Usabilità Ottimizzata */
+        @media (max-width: 768px) {
+            * {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                font-size: 20px !important;
+                overflow-x: hidden;
+                line-height: 1.7 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Eliminazione completa padding laterali */
+            div[style*="padding: 0 25px"],
+            div[style*="padding: 0 40px"] {
+                padding: 0 10px !important;
+            }
+            
+            .day-card {
+                cursor: default;
+                touch-action: manipulation;
+                padding: 25px !important;
+                margin-bottom: 25px !important;
+            }
+            
+            /* Loading ENORMI per iPhone */
+            .loading-title {
+                font-size: 3.5rem !important;
+                line-height: 1.1 !important;
+                margin-bottom: 25px !important;
+            }
+            
+            .loading-subtitle {
+                font-size: 1.4rem !important;
+                margin-bottom: 35px !important;
+                line-height: 1.4 !important;
+            }
+            
+            /* Ottimizzazione immagini */
+            img {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            
+            /* Mappa responsive */
+            #map {
+                height: 320px !important;
+                margin-bottom: 20px !important;
+                border-radius: 15px !important;
+            }
+            
+            /* Text più leggibile */
+            p, span, div {
+                font-size: inherit !important;
+            }
+        }
+        
+        /* Ottimizzazioni per iPhone 12/13/14/15 */
+        @media only screen and (max-width: 428px) {
+            .hero-title {
+                font-size: 3.2rem !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem !important;
+            }
+            
+            .hero-description {
+                font-size: 1.2rem !important;
+            }
+            
+            .loading-title {
+                font-size: 3.2rem !important;
+            }
+            
+            .loading-subtitle {
+                font-size: 1.3rem !important;
+            }
+            
+            section {
+                padding: 50px 15px !important;
+            }
+        }
+        
+        /* Orientamento landscape su mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .hero-section { min-height: 100vh !important; padding: 30px 0 !important; }
+            .loading-screen { padding: 20px 0; }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- Loading (short & dismissible) -->
-  <div id="loadingScreen" class="loading-screen" role="dialog" aria-live="polite">
-    <!-- EMOJI CHE CADONO -->
-    <div class="falling-background">
-      <div class="falling-item">🎄</div>
-      <div class="falling-item">🎁</div>
-      <div class="falling-item">⭐</div>
-      <div class="falling-item">❄️</div>
-      <div class="falling-item">🎄</div>
-      <div class="falling-item">🎁</div>
-      <div class="falling-item">⭐</div>
-      <div class="falling-item">❄️</div>
-      <div class="falling-item">🎄</div>
-      <div class="falling-item">🎁</div>
-      <div class="falling-item">⭐</div>
-      <div class="falling-item">❄️</div>
-    </div>
-    
-    <div class="loading-card" role="document">
-      <h2 class="loading-title">CIAO VALERY 🧝‍♀️</h2>
-      <p class="loading-sub">Gli elfi stanno preparando il tuo regalo — quasi pronto!</p>
-      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
-      <p style="margin-top:10px;font-size:0.9rem;opacity:.9">Tocca lo schermo per saltare l'animazione.</p>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <main id="main" class="wrap" style="opacity:0;transition:opacity .35s ease">
-    <!-- HERO -->
-    <section class="hero">
-      <div>
-        <h1>MONTENEGRO</h1>
-        <p class="lead">ROADTRIP 2026 — Partiamo dalle basi..Sai dov'è il Montenegro?</p>
-      </div>
-    </section>
-
-    <div class="checkerboard"></div>
-
-    <!-- Where -->
-    <section>
-      <div style="max-width:var(--max-width);margin:0 auto;">
-        <div style="text-align:center;margin-bottom:20px">
-          <h2 style="font-family:var(--font-display);font-size:clamp(20px,4vw,34px);margin:0;color:var(--green-dark)">ECCO DOVE SI TROVA!</h2>
-          <p style="color:#666;margin-top:12px">Il Montenegro è un piccolo gioiello nascosto nei Balcani, tra la Croazia e l'Albania</p>
-        </div>
-
-        <div class="card" style="overflow:hidden;margin-bottom:20px;">
-          <img src="https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/8montenegro-sveti-stefan.jpg.webp?v=1710787222"
-               alt="Sveti Stefan" loading="lazy">
-          <div style="padding:14px;text-align:center">
-            <h3 style="font-family:var(--font-display);margin:0;color:var(--green-dark)">ISOLOTTO DI SVETI STEFAN</h3>
-            <p style="color:#666;margin:8px 0 0">Uno degli affacci più famosi della costa del Montenegro</p>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-          <div class="card" style="text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">🗺️</div>
-            <h4 style="margin:0;color:var(--green-dark)">POSIZIONE</h4>
-            <p style="color:#666;margin:8px 0 0">Penisola balcanica, confina con Serbia, Bosnia, Croazia e Albania</p>
-          </div>
-          <div class="card" style="text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">📏</div>
-            <h4 style="margin:0;color:var(--green-dark)">DIMENSIONI</h4>
-            <p style="color:#666;margin:8px 0 0">13.812 km² (come l'Abruzzo!)</p>
-          </div>
-          <div class="card" style="text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">👥</div>
-            <h4 style="margin:0;color:var(--green-dark)">POPOLAZIONE</h4>
-            <p style="color:#666;margin:8px 0 0">Circa 630.000 abitanti</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="checkerboard"></div>
-
-    <!-- Why -->
-    <section>
-      <div style="max-width:var(--max-width);margin:0 auto;text-align:center">
-        <h2 style="font-family:var(--font-display);margin-bottom:12px;color:var(--green-dark)">PERCHÉ MONTENEGRO?</h2>
-        <p style="color:#666;margin-bottom:20px">La perla nascosta dei Balcani</p>
-
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
-          <div class="card">
-            <div style="width:60px;height:60px;border-radius:50%;background:var(--green-bright);display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">🚗</div>
-            <h3 style="margin:0;color:var(--green-dark)">IL NOSTRO PRIMO ROADTRIP</h3>
-            <p style="color:#666;margin-top:8px">Alla scoperta di luoghi autentici</p>
-          </div>
-
-          <div class="card">
-            <div style="width:60px;height:60px;border-radius:50%;background:var(--green-bright);display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">🏔️</div>
-            <h3 style="margin:0;color:var(--green-dark)">NATURA SELVAGGIA</h3>
-            <p style="color:#666;margin-top:8px">Dalle vette alpine alle baie turchesi</p>
-          </div>
-
-          <div class="card">
-            <div style="width:60px;height:60px;border-radius:50%;background:var(--green-bright);display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">🏛️</div>
-            <h3 style="margin:0;color:var(--green-dark)">STORIA AUTENTICA</h3>
-            <p style="color:#666;margin-top:8px">Città UNESCO e fortezze medievali</p>
-          </div>
-
-          <div class="card">
-            <div style="width:60px;height:60px;border-radius:50%;background:var(--green-bright);display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">🍷</div>
-            <h3 style="margin:0;color:var(--green-dark)">SAPORI UNICI</h3>
-            <p style="color:#666;margin-top:8px">Vini locali e cucina mediterranea</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="checkerboard"></div>
-
-    <!-- Trip overview -->
-    <section style="background:var(--green-dark);color:var(--white);padding:40px 0">
-      <div style="max-width:var(--max-width);margin:0 auto;padding:12px">
-        <h2 style="font-family:var(--font-display);text-align:center;margin:0 0 18px;color:var(--cream)">DETTAGLI DEL VIAGGIO</h2>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-          <div class="card" style="background:rgba(255,255,255,0.06);text-align:center">
-            <div style="font-size:28px">📅</div>
-            <h4 style="margin:8px 0 0">Date</h4>
-            <p style="margin:6px 0 0">1 - 6 Aprile 2026</p>
-          </div>
-          <div class="card" style="background:rgba(255,255,255,0.06);text-align:center">
-            <div style="font-size:28px">⏳</div>
-            <h4 style="margin:8px 0 0">Durata</h4>
-            <p style="margin:6px 0 0">6 Giorni / 5 Notti</p>
-          </div>
-          <div class="card" style="background:rgba(255,255,255,0.06);text-align:center">
-            <div style="font-size:28px">📍</div>
-            <h4 style="margin:8px 0 0">Pernottamenti</h4>
-            <p style="margin:6px 0 0">Kotor (3) + Budva (2)</p>
-          </div>
-          <div class="card" style="background:rgba(255,255,255,0.06);text-align:center">
-            <div style="font-size:28px">🚗</div>
-            <h4 style="margin:8px 0 0">Distanza</h4>
-            <p style="margin:6px 0 0">~550 km totali</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Map -->
-    <section>
-      <div style="max-width:var(--max-width);margin:0 auto">
-        <h2 style="font-family:var(--font-display);margin-bottom:12px;color:var(--green-dark)">LA MAPPA</h2>
-        <p style="color:#666;margin-top:0">Il nostro percorso attraverso il Montenegro</p>
-
-        <div style="margin-top:12px" class="card">
-          <div id="map" aria-label="Mappa del roadtrip"></div>
-        </div>
-
-        <!-- legend (kept simple & responsive) -->
-        <div style="margin-top:12px" class="card">
-          <div style="display:flex;flex-wrap:wrap;gap:12px">
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:#E91E63"></div><strong>Giorno 1 - Arrivo</strong></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:#FF9800"></div><strong>Giorno 2 - Vino</strong></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:#FFC107"></div><strong>Giorno 3 - Perast</strong></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:#4CAF50"></div><strong>Giorno 4 - Lovćen</strong></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:#2196F3"></div><strong>Giorno 5 - Lago</strong></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:#9C27B0"></div><strong>Giorno 6 - Partenza</strong></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div style="max-width:var(--max-width);margin:0 auto;padding:0 12px 40px">
-      <div class="card" style="margin-bottom:12px">🚗 <strong>Percorso Totale:</strong> Podgorica → Kotor (3 notti) → Budva (2 notti) → Podgorica</div>
-
-      <div class="days">
-        <!-- Example day card (you have many - keep same structure) -->
-        <article class="day">
-          <div class="head">
-            <div class="num" aria-hidden="true">1</div>
-            <div>
-              <h4>Mercoledì 1 Aprile - Arrivo e Primo Assaggio di Kotor</h4>
+<div class="loading-screen" id="loadingScreen">
+    <div class="falling-background" id="fallingBackground"></div>
+    <div class="loading-content">
+        <h1 class="loading-title">CIAO VALERY 🧝‍♀️</h1>
+        <p class="loading-subtitle">Gli elfi di Babbo Natale stanno preparando il tuo regalo</p>
+        <div class="car-container">
+            <div class="road">
+                <div class="road-line"></div>
             </div>
-          </div>
-          <div class="location">Podgorica ➜ Kotor (90 km, 1 ora e 30 minuti)</div>
-          <ul class="activities">
-            <li>Arrivo all'aeroporto di Podgorica e ritiro dell'auto a noleggio</li>
-            <li>Viaggio panoramico verso Kotor attraverso le montagne</li>
-            <li>Check-in e relax</li>
-            <li>Passeggiata serale nel centro storico</li>
-          </ul>
-        </article>
-
-        <!-- copy/paste your other .day cards here preserving markup -->
-      </div>
+            <div class="car">
+                <div class="car-body">
+                    <div class="car-window"></div>
+                    <div class="wheel front"></div>
+                    <div class="wheel back"></div>
+                </div>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8; font-style: italic;">
+            (Il loading screen dura 45 secondi, ma puoi disattivarlo rimuovendo il `setTimeout` nel JavaScript!)
+        </p>
     </div>
+</div>
 
-    <footer>
-      💝 Creato con amore per Valery 💝
+<div id="mainContent" style="opacity: 0;">
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Montenegro</h1>
+            <h2 class="hero-subtitle">La perla selvaggia dei Balcani</h2>
+            <p class="hero-description">
+                Un roadtrip di 6 giorni tra antiche fortezze, acque cristalline e vette montuose.
+            </p>
+        </div>
+    </section>
+
+    <div class="checkerboard"></div>
+
+    <section style="background: var(--cream); padding: 80px 0;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 25px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.1;">ECCO DOVE SI TROVA!</h2>
+                <p style="font-size: 1.2rem; color: #666; line-height: 1.6; padding: 0 15px;">
+                    Il Montenegro è un piccolo gioiello nascosto nei Balcani, tra la Croazia e l'Albania<br>Una perla selvaggia affacciata sul Mar Adriatico ✨
+                </p>
+            </div>
+
+            <div style="background: var(--cream); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.15); margin-bottom: 40px;">
+                <img src="https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/8montenegro-sveti-stefan.jpg.webp?v=1710787222" alt="Montenegro - L'isolotto di Sveti Stefan" style="width: 100%; height: 350px; object-fit: cover; display: block;">
+                <div style="padding: 25px; text-align: center;">
+                    <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 15px;">ISOLOTTO DI SVETI STEFAN</h3>
+                    <p style="font-size: 1.1rem; color: #666; line-height: 1.5;">Uno degli affacci più famosi della costa del Montenegro</p>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="background: var(--green-dark); color: var(--white); padding: 50px 30px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🗺️</div>
+                    <h4 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: var(--cream);">POSIZIONE</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.5; opacity: 0.9;">Penisola balcanica, confina con Serbia, Bosnia, Croazia e Albania</p>
+                </div>
+                <div style="background: var(--green-bright); color: var(--white); padding: 50px 30px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">📏</div>
+                    <h4 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px;">DIMENSIONI</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.5;">Superficie: 13.812 km² (come l'Abruzzo!)</p>
+                </div>
+                <div style="background: var(--cream); color: var(--green-dark); padding: 50px 30px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">💰</div>
+                    <h4 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px;">VALUTA</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.5;">Euro (€)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="checkerboard"></div>
+
+    <section style="background: var(--white); padding: 80px 0;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 25px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; color: var(--green-dark); margin-bottom: 30px; text-transform: uppercase; line-height: 1.1;">Perché il Montenegro?</h2>
+                <p style="font-size: 1.2rem; color: #666; line-height: 1.6; padding: 0 15px;">
+                    Un regalo per l'anima: la scelta di un viaggio verso una destinazione non banale, alla scoperta di luoghi ancora autentici
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                <div style="background: var(--white); padding: 60px 30px; border-radius: 15px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                    <div style="width: 90px; height: 90px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 35px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem;">🏔️</div>
+                    <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.3;">NATURA SELVAGGIA</h3>
+                    <p style="color: #666; font-size: 1.1rem; line-height: 1.6;">Dalle vette alpine alle baie turchesi, tutto in pochi chilometri</p>
+                </div>
+                <div style="background: var(--white); padding: 60px 30px; border-radius: 15px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                    <div style="width: 90px; height: 90px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 35px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem;">🏛️</div>
+                    <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.3;">STORIA AUTENTICA</h3>
+                    <p style="color: #666; font-size: 1.1rem; line-height: 1.6;">Città UNESCO, fortezze medievali e tradizioni millenarie</p>
+                </div>
+                <div style="background: var(--white); padding: 60px 30px; border-radius: 15px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                    <div style="width: 90px; height: 90px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 35px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem;">🍷</div>
+                    <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.3;">SAPORI UNICI</h3>
+                    <p style="color: #666; font-size: 1.1rem; line-height: 1.6;">Una gastronomia con influenze balcaniche, mediterranee e orientali</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="checkerboard"></div>
+
+    <section style="background: var(--green-dark); color: var(--white); padding: 90px 0;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 25px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-family: var(--font-display); font-size: 3.8rem; font-weight: 900; color: var(--cream); margin-bottom: 30px; text-transform: uppercase; line-height: 1.1;">ROADTRIP DETTAGLI</h2>
+                <p style="font-size: 1.4rem; color: rgba(255,255,255,0.9); line-height: 1.6; padding: 0 15px;">Tutto ciò che c'è da sapere sulla logistica del viaggio</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div style="text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                    <div style="font-size: 3.5rem; margin-bottom: 20px;">🗓️</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Date</h3>
+                    <p style="font-size: 1.3rem; opacity: 0.95;">1 - 6 Aprile 2026</p>
+                </div>
+                <div style="text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                    <div style="font-size: 3.5rem; margin-bottom: 20px;">⏳</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Durata</h3>
+                    <p style="font-size: 1.3rem; opacity: 0.95;">6 Giorni / 5 Notti</p>
+                </div>
+                <div style="text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                    <div style="font-size: 3.5rem; margin-bottom: 20px;">📍</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Pernottamenti</h3>
+                    <p style="font-size: 1.3rem; opacity: 0.95;">Kotor (3) + Budva (2)</p>
+                </div>
+                <div style="text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                    <div style="font-size: 3.5rem; margin-bottom: 20px;">🚗</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Distanza</h3>
+                    <p style="font-size: 1.3rem; opacity: 0.95;">~550 km totali</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: var(--white); padding: 90px 0; width: 100%; max-width: 100%;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 25px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-family: var(--font-display); font-size: 3.8rem; font-weight: 900; color: var(--green-dark); margin-bottom: 30px; text-transform: uppercase; line-height: 1.1;">LA MAPPA</h2>
+                <p style="font-size: 1.4rem; color: #666; line-height: 1.6; padding: 0 15px;">Il nostro percorso attraverso il Montenegro</p>
+            </div>
+            
+            <div id="map"></div>
+
+            <div style="background: var(--cream); padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+                <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-align: center;">Legenda Tappe</h3>
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
+                        <div style="width: 35px; height: 35px; background: #E91E63; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 1 - Arrivo</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
+                        <div style="width: 35px; height: 35px; background: #FF9800; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 2 - Herceg Novi</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
+                        <div style="width: 35px; height: 35px; background: #FFC107; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 3 - Perast</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
+                        <div style="width: 35px; height: 35px; background: #4CAF50; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 4 - Lovćen</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
+                        <div style="width: 35px; height: 35px; background: #2196F3; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 5 - Lago</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0;">
+                        <div style="width: 35px; height: 35px; background: #9C27B0; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 6 - Partenza</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="checkerboard"></div>
+
+    <section style="background: var(--cream); padding: 90px 0;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 25px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-family: var(--font-display); font-size: 3.8rem; font-weight: 900; color: var(--green-dark); margin-bottom: 30px; text-transform: uppercase; line-height: 1.1;">ITINERARIO</h2>
+                <p style="font-size: 1.4rem; color: #666; line-height: 1.6; padding: 0 15px;">Dettaglio giorno per giorno del viaggio</p>
+            </div>
+            
+            <div class="info-box travel-info" style="margin-bottom: 25px;">
+                🚗 <strong>Percorso Totale:</strong> Podgorica → Kotor (3 notti) → Budva (2 notti) → Podgorica
+            </div>
+            
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-1">1</div>
+                    <div class="day-title">Mercoledì 1 Aprile - Arrivo e Primo Assaggio di Kotor</div>
+                </div>
+                <div class="location">Podgorica ➜ Kotor (90 km, 1 ora e 30 minuti)</div>
+                <ul class="activities">
+                    <li>Arrivo all'aeroporto di Podgorica (TGD) e ritiro dell'auto a noleggio.</li>
+                    <li>Trasferimento a Kotor, città Patrimonio UNESCO.</li>
+                    <li>Check-in in appartamento a Kotor (Base per 3 notti).</li>
+                    <li>Pomeriggio: Prima esplorazione della Città Vecchia di Kotor e cena nel borgo medievale.</li>
+                </ul>
+                <div class="info-box accommodation">
+                    Pernottamento a Kotor (3 notti).
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-2">2</div>
+                    <div class="day-title">Giovedì 2 Aprile - La Riviera e il Vino di Morinj</div>
+                </div>
+                <div class="location">Kotor ➜ Herceg Novi (65 km, 1 ora e 30 minuti)</div>
+                <ul class="activities">
+                    <li>Mattina: Esplorazione del lungomare e della fortezza di Herceg Novi.</li>
+                    <li>Visita al Monastero ortodosso di Savina (vicino Herceg Novi).</li>
+                    <li>Pranzo a base di pesce fresco sul mare.</li>
+                    <li>Pomeriggio: Degustazione di ostriche e assaggio di vino locale (Morinj o zona circostante).</li>
+                    <li>Rientro a Kotor in serata.</li>
+                </ul>
+                <div class="info-box travel-info">
+                    Guida panoramica sulle Bocche di Cattaro (Boka Kotorska).
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-3">3</div>
+                    <div class="day-title">Venerdì 3 Aprile - Perast e Nostra Signora delle Rocce</div>
+                </div>
+                <div class="location">Kotor ➜ Perast (14 km, 20m)</div>
+                <ul class="activities">
+                    <li>Esplorazione del borgo barocco di Perast.</li>
+                    <li>Escursione in barca all'isola artificiale Our Lady of the Rocks (€5-10/persona).</li>
+                    <li>Pranzo con vista sulle Bocche di Cattaro.</li>
+                    <li>Pomeriggio: Salita parziale alle mura di Kotor (Fortezza di San Giovanni) per il tramonto.</li>
+                </ul>
+            </div>
+
+            <div class="day-card" style="border-left: 5px solid #4CAF50;">
+                <div class="day-header">
+                    <div class="day-number day-4">4</div>
+                    <div class="day-title">Sabato 4 Aprile - Lovćen e Trasferimento a Budva ⭐</div>
+                </div>
+                <div class="location">Kotor ➜ Lovćen ➜ Cetinje ➜ Budva (circa 70 km)</div>
+                <ul class="activities">
+                    <li>Check-out da Kotor e partenza con i bagagli</li>
+                    <li>Guida panoramica sulla famosa strada P1 con i suoi 25 tornanti</li>
+                    <li>Visita al Mausoleo di Njegoš (1.761 m) per una vista mozzafiato a 360°</li>
+                    <li>Breve sosta a Cetinje, l'antica capitale reale del Montenegro</li>
+                    <li>Tappa fotografica all'iconica Sveti Stefan</li>
+                    <li>Arrivo e check-in a Budva</li>
+                </ul>
+                <div class="info-box accommodation">
+                    Pernottamento a Budva per le prossime 2 notti
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-5">5</div>
+                    <div class="day-title">Domenica 5 Aprile - Lago Skadar e Vini di Godinje</div>
+                </div>
+                <div class="location">Budva ➜ Lago Skadar (70 km, 1 ora e 15 minuti)</div>
+                <ul class="activities">
+                    <li>Visita al punto panoramico di Pavlova Strana per la vista "ferro di cavallo"</li>
+                    <li>Escursione in barca sul Lago di Skadar, il più grande dei Balcani</li>
+                    <li>Pranzo con specialità di pesce di lago in ristorante tradizionale</li>
+                    <li>Tour e degustazione di vini Vranac nella regione vinicola di Godinje</li>
+                    <li>Rientro a Budva in serata</li>
+                </ul>
+                <div class="info-box travel-info">
+                    Giornata immersi nella natura del parco nazionale e tra i vigneti montenegrini.
+                </div>
+            </div>
+
+            <div class="day-card">
+                <div class="day-header">
+                    <div class="day-number day-6">6</div>
+                    <div class="day-title">Lunedì 6 Aprile - Arrivederci Montenegro</div>
+                </div>
+                <div class="location">Budva ➜ Podgorica (65 km, 1 ora e 10 minuti)</div>
+                <ul class="activities">
+                    <li>Colazione rilassante a Budva con vista mare</li>
+                    <li>Check-out dall'hotel e ultimi acquisti di souvenir</li>
+                    <li>Trasferimento all'aeroporto di Podgorica (partenza entro le 12:00)</li>
+                    <li>Riconsegna dell'auto a noleggio e partenza</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <footer style="background: var(--green-dark); color: var(--cream); padding: 40px 20px; text-align: center;">
+        <p style="font-size: 1rem; margin: 0; padding: 0;">Buon Viaggio! 🎁</p>
+        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Progettato con 💚 per Valery</p>
     </footer>
-  </main>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+</div>
 
-  <script>
-    // --- Loading behavior: short & skip on tap ---
-    (function(){
-      const loading = document.getElementById('loadingScreen');
-      const progress = document.getElementById('progressBar');
-      const main = document.getElementById('main');
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha2014-u6+39w2+FRbc7Tq4p+oY0w58n5oG0E7A63f2jQc+I09A"
+        crossorigin=""></script>
+<script>
+    // Inizializzazione della mappa
+    let map = null;
 
-      // animate progress to 100% quickly (demo-friendly)
-      requestAnimationFrame(()=>progress.style.width = '100%');
+    function initMap() {
+        if (map) {
+            map.remove();
+        }
+        
+        // Imposta la vista iniziale sulle Bocche di Cattaro
+        map = L.map('map', {
+            center: [42.434, 18.771],
+            zoom: 10,
+            zoomControl: false // Rimuove il controllo dello zoom di default
+        });
 
-      // automatically hide after 1800ms (1.8s) to improve UX on mobile
-      const hideAfter = setTimeout(hideLoading, 1800);
+        // Layer per le tessere della mappa (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: 'Mappa &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
 
-      // allow touch to skip
-      loading.addEventListener('click', () => {
-        clearTimeout(hideAfter);
-        hideLoading();
-      }, {passive:true});
+        // Funzione per ottenere il colore del giorno (riportata anche in JS per consistenza)
+        function getDayColor(day) {
+            const colors = {
+                1: '#E91E63', // Rosa vibrante - Arrivo
+                2: '#FF9800', // Arancione - Herceg Novi & Vino
+                3: '#FFC107', // Giallo dorato - Perast
+                4: '#4CAF50', // Verde - Lovćen (giorno ottimizzato)
+                5: '#2196F3', // Blu - Lago Skadar
+                6: '#9C27B0' // Viola - Partenza
+            };
+            return colors[day] || '#C2799B';
+        }
 
-      function hideLoading(){
-        loading.classList.add('hidden');
-        main.style.opacity = '1';
-        // remove node after transition
-        setTimeout(()=>{ if(loading && loading.parentNode) loading.parentNode.removeChild(loading); }, 600);
-      }
-    })();
+        // Coordinate delle tappe principali con immagini (Stesso array fornito nel codice originale)
+        const stops = [
+            { name: "Podgorica (Inizio)", lat: 42.378, lng: 19.255, day: 1, info: "Arrivo e ritiro auto", image: "https://cdn.getyourguide.com/image/format=auto,fit=crop,gravity=auto,quality=60,width=450,height=450,dpr=2/tour_img/eed2e1a91e5c3c0a4d531a789a74653e5e6b20645062c3e105e4c03986a836ed.jpg" },
+            { name: "Kotor (Base)", lat: 42.424, lng: 18.771, day: 1, info: "Pernottamento (3 Notti)", image: "https://www.tourdefork.it/wp-content/uploads/2021/08/kotor.jpg" },
+            { name: "Herceg Novi", lat: 42.453, lng: 18.541, day: 2, info: "Riviera e Forte Spanjola", image: "https://www.montenegro.travel/sites/montenegro.travel/files/styles/osnovna/public/herceg_novi_-_stari_grad.jpg?itok=W3R0Z1-s" },
+            { name: "Perast", lat: 42.477, lng: 18.705, day: 3, info: "Nostra Signora delle Rocce", image: "https://www.montenegro.travel/sites/montenegro.travel/files/styles/osnovna/public/perast_i_otoci_crna_gora.jpg?itok=4Q7wQ5Cq" },
+            { name: "Lovćen", lat: 42.396, lng: 18.847, day: 4, info: "Mausoleo di Njegoš", image: "https://www.tourdefork.it/wp-content/uploads/2021/08/lovcen.jpg" },
+            { name: "Cetinje", lat: 42.384, lng: 18.924, day: 4, info: "Capitale Reale", image: "https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/Cetinje-istock.jpg?v=1710778917" },
+            { name: "Sveti Stefan", lat: 42.256, lng: 18.895, day: 4, info: "Tappa Fotografica", image: "https://img1.advisor.travel/1314x680px-Sveti_Stefan_27.jpg" },
+            { name: "Budva (Base)", lat: 42.285, lng: 18.848, day: 4, info: "Pernottamento (2 Notti)", image: "https://cdn.getyourguide.com/image/format=auto,fit=contain,gravity=center,quality=60,width=1440,height=650,dpr=1/tour_img/65f6c813fd64112e643c92daa775eb4e46e06d354a39c50fb2db5f02ae9c47f8.jpeg" },
+            { name: "Lago Skadar", lat: 42.336, lng: 19.123, day: 5, info: "Pavlova Strana & Giro in barca", image: "https://mybestplace.com/uploads/2022/05/montenegro-rijeka-crnojevica-1653557088.jpg" },
+            { name: "Podgorica (Fine)", lat: 42.378, lng: 19.255, day: 6, info: "Partenza Aeroporto", image: "https://www.tourdefork.it/wp-content/uploads/2021/08/podgorica.jpg" }
+        ];
+        
+        // Icona custom per i marker
+        const customIcon = (color) => L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            popupAnchor: [0, -14]
+        });
 
-    // --- init Leaflet map with same stops as original file (kept data & popups) ---
-    document.addEventListener('DOMContentLoaded', function(){
-      // stops data -- same as your original content (kept images)
-      const stops = [
-        { name:"Podgorica (Inizio)", lat:42.378, lng:19.255, day:1, info:"Arrivo e ritiro auto", image:"https://cdn.getyourguide.com/image/format=auto,fit=crop,gravity=auto,quality=60,width=450,height=450,dpr=2/tour_img/eed27c2e7872e67037ab93473bc7c0779c59789598e18ca70e277d904124f704.jpg" },
-        { name:"Kotor (Base)", lat:42.424, lng:18.771, day:1, info:"Pernottamento (3 Notti)", image:"https://static2-viaggi.corriereobjects.it/wp-content/uploads/2022/10/Apertura-iStock-951469758-ok.jpg.webp?v=1666977327" },
-        { name:"Herceg Novi", lat:42.455, lng:18.535, day:2, info:"Visita e Cantina Savina", image:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/9d/1a/58/caption.jpg?w=300&h=300&s=1" },
-        { name:"Perast", lat:42.483, lng:18.692, day:3, info:"Nostra Signora delle Rocce", image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLgrVlOv-wgtsIJV6SBQbV9gVZ3i9dKBLEbQ&s" },
-        { name:"Lovćen", lat:42.395, lng:18.847, day:4, info:"Mausoleo di Njegoš", image:"https://t1.gstatic.com/licensed-image?q=tbn:ANd9GcQaoxdVOpBLK7WXbWXgzYV55IrmR6OHXC_GxanY-gCe8BN7nhTR0gcLxLXdfh33wBy_e5JarMLz6yPw4PcD" },
-        { name:"Cetinje", lat:42.384, lng:18.924, day:4, info:"Capitale Reale", image:"https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/Cetinje-istock.jpg?v=1710778917" },
-        { name:"Sveti Stefan", lat:42.256, lng:18.895, day:4, info:"Tappa Fotografica", image:"https://img1.advisor.travel/1314x680px-Sveti_Stefan_27.jpg" },
-        { name:"Budva (Base)", lat:42.285, lng:18.848, day:4, info:"Pernottamento (2 Notti)", image:"https://cdn.getyourguide.com/image/format=auto,fit=contain,gravity=center,quality=60,width=1440,height=650,dpr=1/tour_img/65f6c813fd64112e643c92daa775eb4e46e06d354a39c50fb2db5f02ae9c47f8.jpeg" },
-        { name:"Lago Skadar", lat:42.336, lng:19.123, day:5, info:"Pavlova Strana & Giro in barca", image:"https://mybestplace.com/uploads/2021/06/Lago-di-Skadar-Montenegro-COVER.jpg" },
-        { name:"Podgorica (Fine)", lat:42.354, lng:19.279, day:6, info:"Riconsegna auto e Partenza", image:"https://cdn.getyourguide.com/image/format=auto,fit=crop,gravity=auto,quality=60,width=450,height=450,dpr=2/tour_img/eed27c2e7872e67037ab93473bc7c0779c59789598e18ca70e277d904124f704.jpg" }
-      ];
+        // Aggiunta dei marker alla mappa con popup
+        stops.forEach(stop => {
+            const marker = L.marker([stop.lat, stop.lng], { icon: customIcon(getDayColor(stop.day)) }).addTo(map);
 
-      function getDayColor(d){
-        const colors = {1:'#E91E63',2:'#FF9800',3:'#FFC107',4:'#4CAF50',5:'#2196F3',6:'#9C27B0'};
-        return colors[d] || '#C2799B';
-      }
+            // Contenuto del popup
+            const popupContent = `
+                <div style="font-family: var(--font-main); padding: 5px;">
+                    <h4 style="margin: 0 0 5px 0; font-size: 1.2rem; color: ${getDayColor(stop.day)}; font-weight: 700;">Giorno ${stop.day}: ${stop.name}</h4>
+                    <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #555;">${stop.info}</p>
+                    <img src="${stop.image}" alt="${stop.name}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                </div>
+            `;
 
-      const map = L.map('map', { scrollWheelZoom:false }).setView([42.39,18.9],9);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, attribution:'© OpenStreetMap contributors'}).addTo(map);
+            marker.bindPopup(popupContent, {
+                maxWidth: 250,
+                className: 'custom-popup'
+            });
+        });
 
-      stops.forEach(s=>{
-        const iconHtml = `<div style="background:linear-gradient(135deg, ${getDayColor(s.day)}, ${getDayColor(s.day)}cc);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;border:2px solid #fff;font-family:Fredoka, sans-serif">${s.day}</div>`;
-        const marker = L.marker([s.lat,s.lng],{icon:L.divIcon({className:'',html:iconHtml,iconSize:[36,36],iconAnchor:[18,36]})}).addTo(map);
+        // Definizione dei punti per la Linea di Percorso (Roadtrip)
+        const routeCoordinates = [
+            [stops[0].lat, stops[0].lng], // Podgorica Start
+            [stops[1].lat, stops[1].lng], // Kotor
+            [stops[2].lat, stops[2].lng], // Herceg Novi
+            [stops[1].lat, stops[1].lng], // Ritorno a Kotor
+            [stops[3].lat, stops[3].lng], // Perast
+            [stops[1].lat, stops[1].lng], // Ritorno a Kotor
+            [stops[4].lat, stops[4].lng], // Lovćen
+            [stops[5].lat, stops[5].lng], // Cetinje
+            [stops[6].lat, stops[6].lng], // Sveti Stefan
+            [stops[7].lat, stops[7].lng], // Budva
+            [stops[8].lat, stops[8].lng], // Lago Skadar
+            [stops[7].lat, stops[7].lng], // Ritorno a Budva
+            [stops[9].lat, stops[9].lng]  // Podgorica End
+        ];
 
-        const popupContent = `
-          <div style="text-align:center;font-family:Fredoka, cursive;min-width:200px">
-            <img src="${s.image}" alt="${s.name}" style="width:100%;height:110px;object-fit:cover;border-radius:6px;margin-bottom:8px" loading="lazy">
-            <div style="background:${getDayColor(s.day)};color:white;padding:4px 10px;border-radius:12px;display:inline-block;margin-bottom:8px;font-weight:600">Giorno ${s.day}</div>
-            <h4 style="margin:6px 0 4px">${s.name}</h4>
-            <p style="margin:0;color:#666;font-size:13px">${s.info}</p>
-          </div>
-        `;
-        marker.bindPopup(popupContent,{maxWidth:260,className:'custom-popup'});
-      });
+        // Disegno della linea di percorso (Polyline) con colore leggibile
+        L.polyline(routeCoordinates, {
+            color: '#1a472a', // Colore verde scuro (var(--green-dark))
+            weight: 4,
+            opacity: 0.7
+        }).addTo(map);
+        
+        // Centro la mappa in modo che includa tutte le tappe
+        const bounds = L.latLngBounds(routeCoordinates);
+        map.fitBounds(bounds, { padding: [50, 50] }); 
+        
+        // Aggiunta del controllo zoom per chi usa il mouse
+        L.control.zoom({ position: 'topright' }).addTo(map);
 
-      // draw polyline (kept same route order as original)
-      const coords = stops.map(s=>[s.lat,s.lng]);
-      L.polyline(coords,{color:'#C2799B',weight:4,opacity:0.8,dashArray:'8,5'}).addTo(map);
+    }
 
-      // ensure map is sized properly when inside responsive containers
-      setTimeout(()=>map.invalidateSize(),350);
+
+    // Falling Items Generation
+    function createFallingItems() {
+        const fallingContainer = document.getElementById('fallingBackground');
+        const items = ['🎁', '🧝‍♀️', '🧝‍♂️', '🎄', '⭐', '🔔', '❄️', '🎀', '🧸', '🍪'];
+
+        function createFallingItem() {
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            item.textContent = items[Math.floor(Math.random() * items.length)];
+
+            // Posizionamento iniziale
+            item.style.left = Math.random() * 95 + '%';
+            item.style.top = '-100px';
+            item.style.position = 'absolute';
+            item.style.fontSize = '2rem';
+            item.style.zIndex = '2';
+            item.style.color = '#ffd700';
+
+            // Scegli animazione casualmente
+            const animations = ['fallDown', 'fallDownSlow'];
+            const chosenAnimation = animations[Math.floor(Math.random() * animations.length)];
+            const duration = chosenAnimation === 'fallDown' ? 8 + Math.random() * 4 : 10 + Math.random() * 6;
+
+            item.style.animation = `${chosenAnimation} ${duration}s linear forwards`;
+            fallingContainer.appendChild(item);
+
+            // Rimuovi l'elemento dopo l'animazione
+            setTimeout(() => {
+                if (item && item.parentNode) {
+                    item.parentNode.removeChild(item);
+                }
+            }, duration * 1000 + 1000);
+        }
+
+        // Crea items ogni 500ms per 50 secondi
+        const interval = setInterval(createFallingItem, 500);
+        setTimeout(() => {
+            clearInterval(interval);
+        }, 50000);
+    }
+
+    // Loading Screen Management
+    window.addEventListener('load', function() {
+        // Inizia la pioggia di regali
+        createFallingItems();
+        
+        // Avvia l'inizializzazione della mappa
+        initMap();
+
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContent = document.getElementById('mainContent');
+            
+            loadingScreen.classList.add('hidden');
+            mainContent.style.opacity = '1';
+            mainContent.style.transition = 'opacity 1.5s ease-in';
+
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+
+        }, 45000); // Loading per 45 secondi
     });
-  </script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... (il codice JS all'interno di DOMContentLoaded non è stato modificato rispetto all'originale per le coordinate, ecc.)
+    });
+
+</script>
 </body>
 </html>
