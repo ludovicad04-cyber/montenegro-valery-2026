@@ -83,22 +83,22 @@
             text-align: center;
             color: var(--white);
             font-family: var(--font-main);
-            max-width: 85vw;
-            padding: 35px 25px;
+            max-width: 90vw;
+            padding: 40px 30px;
             position: relative;
             z-index: 10;
-            background: rgba(26, 71, 42, 0.85);
+            background: rgba(26, 71, 42, 0.9);
             border-radius: 25px;
             backdrop-filter: blur(8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            margin: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            margin: 20px;
         }
 
         .loading-title {
             font-family: var(--font-display);
-            font-size: 2.8rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-transform: uppercase;
             letter-spacing: -1px;
             color: var(--cream);
@@ -106,9 +106,9 @@
         }
 
         .loading-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 400;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
             opacity: 0.9;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -305,30 +305,31 @@
 
         .hero-title {
             font-family: var(--font-display);
-            font-size: 3.2rem;
+            font-size: 4.5rem;
             font-weight: 900;
             margin: 0;
             text-transform: uppercase;
             letter-spacing: -1px;
-            line-height: 1;
+            line-height: 0.9;
             color: var(--cream);
         }
 
         .hero-subtitle {
             font-family: var(--font-main);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 400;
-            margin: 20px 0;
+            margin: 25px 0;
             text-transform: uppercase;
             letter-spacing: 3px;
         }
 
         .hero-description {
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: 300;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             opacity: 0.9;
+            line-height: 1.5;
         }
 
         /* Checkerboard Pattern */
@@ -697,20 +698,20 @@
         }
         
         @media (max-width: 480px) {
-            /* Loading screen ottimizzato */
-            .loading-title { font-size: 2.5rem !important; }
-            .loading-subtitle { font-size: 1.1rem !important; }
+            /* Loading screen GIGANTE */
+            .loading-title { font-size: 3.2rem !important; }
+            .loading-subtitle { font-size: 1.3rem !important; }
             .car-container { width: 220px; height: 80px; }
             .car-body { width: 50px; height: 25px; }
             .car-window { width: 20px; height: 12px; left: 15px; }
             .wheel { width: 12px; height: 12px; }
             .progress-container { width: 180px; }
             
-            /* Hero section leggibile */
-            .hero-title { font-size: 2.6rem !important; line-height: 1.1 !important; margin-bottom: 15px !important; }
-            .hero-subtitle { font-size: 1.1rem !important; margin-bottom: 15px !important; }
-            .hero-description { font-size: 1.1rem !important; padding: 0 25px; line-height: 1.5 !important; }
-            .hero-section { padding: 60px 0 !important; min-height: 60vh !important; }
+            /* Hero section mobile-first */
+            .hero-title { font-size: 3.5rem !important; line-height: 0.9 !important; margin-bottom: 20px !important; }
+            .hero-subtitle { font-size: 1.4rem !important; margin-bottom: 20px !important; }
+            .hero-description { font-size: 1.3rem !important; padding: 0 20px; line-height: 1.6 !important; }
+            .hero-section { padding: 80px 0 !important; min-height: 70vh !important; }
             
             /* Day cards più touch-friendly */
             h1 { font-size: 1.8em; }
@@ -718,14 +719,14 @@
             .day-header { flex-direction: column; align-items: flex-start; }
             .day-number { margin-bottom: 10px; margin-right: 0; width: 40px !important; height: 40px !important; font-size: 1.1rem !important; }
             
-            /* Sezioni con padding generosi */
-            section { padding: 50px 20px !important; }
+            /* Sezioni senza bordi bianchi */
+            section { padding: 50px 0 !important; }
             
-            /* Titoli leggibili */
+            /* Titoli ENORMI */
             h2[style*="font-size: 4rem"],
             h2[style*="font-size: 3rem"] {
-                font-size: 2.2rem !important;
-                line-height: 1.2 !important;
+                font-size: 3rem !important;
+                line-height: 1.1 !important;
             }
             
             h3[style*="font-size: 2.5rem"] {
@@ -766,23 +767,23 @@
         
         /* iPhone-First Design - Tutti i dispositivi mobile */
         @media (max-width: 768px) {
-            /* Base font size per leggibilità */
+            /* Base font size ENORME per leggibilità */
             body {
-                font-size: 18px !important;
-                line-height: 1.6 !important;
+                font-size: 20px !important;
+                line-height: 1.7 !important;
             }
             
-            /* Sezioni principali con padding generosi */
+            /* Sezioni principali senza bordi */
             section {
-                padding: 60px 25px !important;
+                padding: 60px 15px !important;
             }
             
-            /* Titoli MOLTO più grandi per iPhone */
+            /* Titoli ENORMI per iPhone */
             h2[style*="font-size: 4rem"],
             h2[style*="font-size: 3rem"] {
-                font-size: 2.8rem !important;
-                line-height: 1.2 !important;
-                margin-bottom: 25px !important;
+                font-size: 3.2rem !important;
+                line-height: 1.1 !important;
+                margin-bottom: 30px !important;
             }
             
             h2[style*="font-size: 2.5rem"] {
@@ -800,16 +801,16 @@
                 line-height: 1.3 !important;
             }
             
-            /* Paragrafi più leggibili */
+            /* Paragrafi MOLTO più leggibili */
             p[style*="font-size: 1.4rem"] {
-                font-size: 1.3rem !important;
-                padding: 0 20px !important;
-                line-height: 1.6 !important;
+                font-size: 1.5rem !important;
+                padding: 0 15px !important;
+                line-height: 1.7 !important;
             }
             
             p[style*="font-size: 1.3rem"] {
-                font-size: 1.2rem !important;
-                line-height: 1.6 !important;
+                font-size: 1.4rem !important;
+                line-height: 1.7 !important;
             }
             
             p[style*="font-size: 1.2rem"] {
@@ -879,9 +880,17 @@
             body {
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
-                font-size: 18px !important;
+                font-size: 20px !important;
                 overflow-x: hidden;
-                line-height: 1.6 !important;
+                line-height: 1.7 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Eliminazione completa padding laterali */
+            div[style*="padding: 0 25px"],
+            div[style*="padding: 0 40px"] {
+                padding: 0 10px !important;
             }
             
             .day-card {
@@ -891,16 +900,16 @@
                 margin-bottom: 25px !important;
             }
             
-            /* Loading ottimizzato per iPhone */
+            /* Loading ENORMI per iPhone */
             .loading-title {
-                font-size: 2.8rem !important;
+                font-size: 3.5rem !important;
                 line-height: 1.1 !important;
-                margin-bottom: 20px !important;
+                margin-bottom: 25px !important;
             }
             
             .loading-subtitle {
-                font-size: 1.2rem !important;
-                margin-bottom: 30px !important;
+                font-size: 1.4rem !important;
+                margin-bottom: 35px !important;
                 line-height: 1.4 !important;
             }
             
@@ -926,15 +935,27 @@
         /* Ottimizzazioni per iPhone 12/13/14/15 */
         @media only screen and (max-width: 428px) {
             .hero-title {
-                font-size: 2rem !important;
+                font-size: 3.2rem !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem !important;
+            }
+            
+            .hero-description {
+                font-size: 1.2rem !important;
             }
             
             .loading-title {
-                font-size: 1.9rem !important;
+                font-size: 3.2rem !important;
+            }
+            
+            .loading-subtitle {
+                font-size: 1.3rem !important;
             }
             
             section {
-                padding: 35px 10px !important;
+                padding: 50px 15px !important;
             }
         }
         
@@ -1000,11 +1021,11 @@
         <div class="checkerboard"></div>
 
         <!-- Montenegro Location Section -->
-        <section style="background: var(--white); padding: 100px 0; width: 100vw; margin-left: calc(50% - 50vw);">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
-                <div style="text-align: center; margin-bottom: 50px;">
-                    <h2 style="font-family: var(--font-display); font-size: 3rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase; line-height: 1.2;">ECCO DOVE SI TROVA!</h2>
-                    <p style="font-size: 1.3rem; color: #666; line-height: 1.6; padding: 0 20px;">Il Montenegro è un piccolo gioiello nascosto nei Balcani, tra la Croazia e l'Albania<br>Una perla selvaggia affacciata sul Mar Adriatico ✨</p>
+        <section style="background: var(--white); padding: 60px 0; width: 100vw; margin-left: calc(50% - 50vw);">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
+                <div style="text-align: center; margin-bottom: 50px; padding: 0 10px;">
+                    <h2 style="font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.1;">ECCO DOVE SI TROVA!</h2>
+                    <p style="font-size: 1.5rem; color: #666; line-height: 1.6; padding: 0 15px;">Il Montenegro è un piccolo gioiello nascosto nei Balcani, tra la Croazia e l'Albania<br>Una perla selvaggia affacciata sul Mar Adriatico ✨</p>
                 </div>
                 
                 <div style="background: var(--cream); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.15); margin-bottom: 40px;">
@@ -1039,9 +1060,9 @@
 
         <!-- Why Montenegro Section -->
         <section style="background: var(--cream); padding: 80px 0; width: 100vw; margin-left: calc(50% - 50vw);">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 25px; text-align: center;">
-                <h2 style="font-family: var(--font-display); font-size: 3.2rem; font-weight: 900; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.2;">PERCHÉ MONTENEGRO?</h2>
-                <p style="font-size: 1.4rem; color: #666; margin-bottom: 50px; line-height: 1.6;">La perla nascosta dei Balcani</p>
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 10px; text-align: center;">
+                <h2 style="font-family: var(--font-display); font-size: 3.8rem; font-weight: 900; color: var(--green-dark); margin-bottom: 30px; text-transform: uppercase; line-height: 1.1;">PERCHÉ MONTENEGRO?</h2>
+                <p style="font-size: 1.6rem; color: #666; margin-bottom: 50px; line-height: 1.6; padding: 0 15px;">La perla nascosta dei Balcani</p>
             
                 <div style="display: block; margin-bottom: 50px;">
                     <div style="background: var(--white); padding: 50px 40px; border-radius: 0; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
@@ -1082,7 +1103,7 @@
         <!-- Trip Overview -->
         <section style="background: var(--green-dark); color: var(--white); padding: 90px 0; width: 100vw; margin-left: calc(50% - 50vw);">
             <div style="max-width: 1200px; margin: 0 auto; padding: 0 25px;">
-                <h2 style="font-family: var(--font-display); font-size: 3.2rem; font-weight: 900; text-align: center; margin-bottom: 60px; text-transform: uppercase; color: var(--cream); line-height: 1.2;">DETTAGLI DEL VIAGGIO</h2>
+                <h2 style="font-family: var(--font-display); font-size: 3.8rem; font-weight: 900; text-align: center; margin-bottom: 60px; text-transform: uppercase; color: var(--cream); line-height: 1.1; padding: 0 15px;">DETTAGLI DEL VIAGGIO</h2>
                 <div style="display: block;">
                     <div style="text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 25px;">
                         <div style="font-size: 3.5rem; margin-bottom: 20px;">📅</div>
@@ -1112,8 +1133,8 @@
         <section style="background: var(--white); padding: 90px 0; width: 100vw; margin-left: calc(50% - 50vw);">
             <div style="max-width: 1200px; margin: 0 auto; padding: 0 25px;">
                 <div style="text-align: center; margin-bottom: 50px;">
-                    <h2 style="font-family: var(--font-display); font-size: 3.2rem; font-weight: 900; color: var(--green-dark); margin-bottom: 25px; text-transform: uppercase; line-height: 1.2;">LA MAPPA</h2>
-                    <p style="font-size: 1.4rem; color: #666; line-height: 1.6;">Il nostro percorso attraverso il Montenegro</p>
+                    <h2 style="font-family: var(--font-display); font-size: 3.8rem; font-weight: 900; color: var(--green-dark); margin-bottom: 30px; text-transform: uppercase; line-height: 1.1;">LA MAPPA</h2>
+                    <p style="font-size: 1.6rem; color: #666; line-height: 1.6; padding: 0 15px;">Il nostro percorso attraverso il Montenegro</p>
                 </div>
 
                 <div style="margin-bottom: 35px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-radius: 15px; overflow: hidden;">
