@@ -1096,9 +1096,6 @@
         <div class="progress-container">
             <div class="progress-bar"></div>
         </div>
-        <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8; font-style: italic;">
-            (Il loading screen dura 45 secondi, ma puoi disattivarlo rimuovendo il `setTimeout` nel JavaScript!)
-        </p>
     </div>
 </div>
 
@@ -1227,35 +1224,7 @@
             
             <div id="map"></div>
 
-            <div style="background: var(--cream); padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-                <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-align: center;">Legenda Tappe</h3>
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
-                        <div style="width: 35px; height: 35px; background: #E91E63; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 1 - Arrivo</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
-                        <div style="width: 35px; height: 35px; background: #FF9800; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 2 - Herceg Novi</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
-                        <div style="width: 35px; height: 35px; background: #FFC107; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 3 - Perast</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
-                        <div style="width: 35px; height: 35px; background: #4CAF50; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 4 - Lovćen</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0; border-bottom: 1px solid rgba(26, 71, 42, 0.1);">
-                        <div style="width: 35px; height: 35px; background: #2196F3; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 5 - Lago</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 20px; padding: 15px 0;">
-                        <div style="width: 35px; height: 35px; background: #9C27B0; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
-                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 1.1rem;">Giorno 6 - Partenza</span>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </section>
 
@@ -1433,18 +1402,18 @@
             { name: "Podgorica (Fine)", lat: 42.378, lng: 19.255, day: 6, info: "Partenza Aeroporto", image: "https://www.tourdefork.it/wp-content/uploads/2021/08/podgorica.jpg" }
         ];
         
-        // Icona custom per i marker
-        const customIcon = (color) => L.divIcon({
+        // Icona custom per i marker con numeri
+        const customIcon = (color, dayNumber) => L.divIcon({
             className: 'custom-div-icon',
-            html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>`,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14],
-            popupAnchor: [0, -14]
+            html: `<div style="background-color: ${color}; width: 32px; height: 32px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-family: var(--font-main); font-weight: bold; font-size: 14px; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">${dayNumber}</div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
         });
 
         // Aggiunta dei marker alla mappa con popup
         stops.forEach(stop => {
-            const marker = L.marker([stop.lat, stop.lng], { icon: customIcon(getDayColor(stop.day)) }).addTo(map);
+            const marker = L.marker([stop.lat, stop.lng], { icon: customIcon(getDayColor(stop.day), stop.day) }).addTo(map);
 
             // Contenuto del popup
             const popupContent = `
