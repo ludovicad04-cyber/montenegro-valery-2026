@@ -126,6 +126,15 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 3px solid var(--green-bright);
         }
+        
+        .car-body::after {
+            content: '🎅';
+            position: absolute;
+            top: -8px;
+            right: -5px;
+            font-size: 1.2em;
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
 
         .car-window {
             width: 35px;
@@ -167,8 +176,9 @@
 
         .floating-element {
             position: absolute;
-            font-size: 1.5em;
-            animation: gentleFloat 6s ease-in-out infinite;
+            font-size: 2.2em;
+            animation: gentleFloat 6s ease-in-out infinite, christmasSparkle 2s ease-in-out infinite;
+            opacity: 0.85;
         }
 
         .floating-element:nth-child(1) {
@@ -541,6 +551,11 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        @keyframes christmasSparkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
         
         .day-title {
             font-size: 1.2em;
@@ -677,16 +692,20 @@
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="floating-elements">
-            <div class="floating-element">✨</div>
+            <div class="floating-element">🧝‍♀️</div>
             <div class="floating-element">🎁</div>
-            <div class="floating-element">💝</div>
+            <div class="floating-element">🧝‍♂️</div>
+            <div class="floating-element">✨</div>
+            <div class="floating-element">🎄</div>
             <div class="floating-element">⭐</div>
+            <div class="floating-element">🔔</div>
+            <div class="floating-element">❄️</div>
         </div>
         
         <div class="loading-content">
-            <h1 class="loading-title">PREPARANDO</h1>
-            <h2 class="loading-title" style="font-size: 4rem; margin-top: -20px;">LA TUA SORPRESA</h2>
-            <p class="loading-subtitle">Un regalo speciale ti sta aspettando...</p>
+            <h1 class="loading-title">CIAO VALERY 🧝‍♀️</h1>
+            <p class="loading-subtitle">Gli elfi di Babbo Natale stanno preparando</p>
+            <p class="loading-subtitle" style="margin-top: -15px; font-size: 1.8rem; color: var(--green-bright);">LA TUA AVVENTURA MAGICA ✨</p>
             
             <div class="car-container">
                 <div class="road">
@@ -704,6 +723,8 @@
             <div class="progress-container">
                 <div class="progress-bar"></div>
             </div>
+            
+            <p style="margin-top: 20px; font-size: 1rem; opacity: 0.8; font-style: italic;">🎅 Workshop Status: Confezionamento regalo in corso...</p>
         </div>
     </div>
 
