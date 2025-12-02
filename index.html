@@ -779,12 +779,38 @@
                 box-sizing: border-box !important;
             }
             
+            /* ICONE TOUCH-FRIENDLY GRANDI */
+            div[style*="width: 80px"][style*="height: 80px"] {
+                width: 70px !important;
+                height: 70px !important;
+                font-size: 2.2rem !important;
+            }
+            
+            div[style*="width: 90px"][style*="height: 90px"] {
+                width: 80px !important;
+                height: 80px !important;
+                font-size: 2.5rem !important;
+            }
+            
             /* MAPPA OTTIMIZZATA */
             #map {
                 width: 95% !important;
                 height: 320px !important;
                 margin: 0 auto !important;
                 border-radius: 15px !important;
+            }
+            
+            /* CONTAINER PRINCIPALI */
+            div[style*="max-width: 1200px"] {
+                padding: 0 10px !important;
+                width: 100% !important;
+            }
+            
+            /* ATTIVITÀ LIST TOUCH-FRIENDLY */
+            .activities li {
+                font-size: 1.4rem !important;
+                padding: 12px 0 12px 25px !important;
+                line-height: 1.6 !important;
             }
             
             /* DAY CARDS TOUCH-FRIENDLY */
@@ -797,6 +823,27 @@
                 width: 50px !important; 
                 height: 50px !important; 
                 font-size: 1.4rem !important;
+            }
+            
+            /* IMMAGINI RESPONSIVE */
+            img {
+                width: 100% !important;
+                height: auto !important;
+                max-height: 280px !important;
+                object-fit: cover !important;
+                border-radius: 10px !important;
+            }
+            
+            /* TRIP DETAILS OTTIMIZZATI */
+            .trip-details { 
+                flex-direction: column !important; 
+                padding: 15px !important;
+            }
+            .detail-item { 
+                padding: 25px 15px !important;
+                margin: 10px 0 !important;
+                width: 100% !important;
+                font-size: 1.5rem !important;
             }
         }
 
