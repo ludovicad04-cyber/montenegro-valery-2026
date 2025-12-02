@@ -531,6 +531,11 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         
         .day-title {
             font-size: 1.2em;
@@ -677,28 +682,12 @@
             <h1 class="loading-title">MONTENEGRO</h1>
             <p class="loading-subtitle">Caricando l'avventura...</p>
             
-            <div class="car-container">
-                <div class="road">
-                    <div class="road-line"></div>
-                </div>
-                <div class="car">
-                    <div class="car-body">
-                        <div class="car-window"></div>
-                        <div class="wheel front"></div>
-                        <div class="wheel back"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            </div>
+            <div style="width: 80px; height: 80px; border: 4px solid var(--cream); border-top: 4px solid var(--green-bright); border-radius: 50%; animation: spin 1s linear infinite; margin: 30px auto;"></div>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent" style="opacity: 0;">
-        <div class="container">
         
         <!-- Hero Section -->
         <section class="hero-section">
@@ -713,8 +702,8 @@
         <div class="checkerboard"></div>
 
         <!-- Why Montenegro Section -->
-        <section style="background: var(--cream); padding: 100px 0;">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px; text-align: center;">
+        <section style="background: var(--cream); padding: 100px 40px;">
+            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
                 <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">PERCHÉ MONTENEGRO?</h2>
                 <p style="font-size: 1.2rem; color: #666; margin-bottom: 60px;">La perla nascosta dei Balcani</p>
             
@@ -749,8 +738,8 @@
         <div class="checkerboard"></div>
 
         <!-- Trip Overview -->
-        <section style="background: var(--green-dark); color: var(--white); padding: 80px 0;">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
+        <section style="background: var(--green-dark); color: var(--white); padding: 80px 40px;">
+            <div style="max-width: 1200px; margin: 0 auto;">
                 <h2 style="font-family: var(--font-display); font-size: 3rem; font-weight: 900; text-align: center; margin-bottom: 50px; text-transform: uppercase; color: var(--cream);">DETTAGLI DEL VIAGGIO</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
                     <div style="text-align: center;">
@@ -778,19 +767,19 @@
         </section>
 
         <!-- Map Section -->
-        <section style="background: var(--white); padding: 100px 0;">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
+        <section style="background: var(--white); padding: 100px 40px;">
+            <div style="max-width: 1200px; margin: 0 auto;">
                 <div style="text-align: center; margin-bottom: 60px;">
                     <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">LA MAPPA</h2>
                     <p style="font-size: 1.2rem; color: #666;">Il nostro percorso attraverso il Montenegro</p>
                 </div>
 
-                <div style="border: 8px solid var(--green-dark); margin-bottom: 40px;">
+                <div style="margin-bottom: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border-radius: 20px; overflow: hidden;">
                     <div id="map"></div>
                 </div>
 
                 <!-- Legend -->
-                <div style="background: #f8f9fa; padding: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-top: 4px solid var(--green-dark);">
+                <div style="background: var(--cream); padding: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-radius: 20px; margin-top: -20px; position: relative; z-index: 10;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 1 - Arrivo</span>
