@@ -2,7 +2,10 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Roadtrip in Montenegro - 6 Giorni Ottimizzati</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
           integrity="sha2014-zcbZ+P7MD4h7V74F7W7x7/45+K/9W+A7e7O00K+G2/7N+T7f3Y/027A" 
@@ -60,14 +63,6 @@
             pointer-events: none;
             z-index: 2;
             will-change: transform, opacity;
-        }
-
-        .falling-item:nth-child(odd) {
-            animation: fallDown 8s linear;
-        }
-
-        .falling-item:nth-child(even) {
-            animation: fallDownSlow 12s linear;
         }
 
         .loading-screen.hidden {
@@ -161,15 +156,6 @@
             border: 3px solid var(--green-bright);
         }
         
-        .car-body::after {
-            content: '🎅';
-            position: absolute;
-            top: -8px;
-            right: -5px;
-            font-size: 1.2em;
-            animation: gentleFloat 3s ease-in-out infinite;
-        }
-
         .car-window {
             width: 35px;
             height: 20px;
@@ -199,46 +185,7 @@
             left: 10px;
         }
 
-        /* Floating Elements */
-        .floating-elements {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.6;
-            z-index: 5;
-        }
 
-        .floating-element {
-            position: absolute;
-            font-size: 2.2em;
-            animation: gentleFloat 6s ease-in-out infinite, christmasSparkle 2s ease-in-out infinite;
-            opacity: 0.85;
-        }
-
-        .floating-element:nth-child(1) {
-            top: 15%;
-            left: 15%;
-            animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-            top: 25%;
-            right: 20%;
-            animation-delay: 2s;
-        }
-
-        .floating-element:nth-child(3) {
-            bottom: 25%;
-            left: 25%;
-            animation-delay: 4s;
-        }
-
-        .floating-element:nth-child(4) {
-            bottom: 15%;
-            right: 15%;
-            animation-delay: 1s;
-        }
 
         /* Progress Bar */
         .progress-container {
@@ -255,7 +202,7 @@
             background: rgba(255,255,255,0.8);
             border-radius: 3px;
             width: 0;
-            animation: progress 40s ease-out;
+            animation: progress 45s ease-out;
         }
 
         /* Main Content */
@@ -742,6 +689,38 @@
             .day-title { font-size: 0.95em; min-width: 180px; }
             .day-header { flex-direction: column; align-items: flex-start; }
             .day-number { margin-bottom: 10px; margin-right: 0; }
+            
+            /* Ottimizzazioni specifiche iPhone */
+            .hero-title { font-size: 3rem !important; }
+            .hero-subtitle { font-size: 1rem !important; }
+            .hero-description { font-size: 0.9rem !important; padding: 0 20px; }
+        }
+
+        /* Ottimizzazioni per iPhone X e successivi */
+        @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+            body { padding-top: env(safe-area-inset-top); }
+            .loading-screen { padding-top: env(safe-area-inset-top); }
+        }
+
+        /* Miglioramenti touch per dispositivi mobili */
+        @media (max-width: 768px) {
+            .day-card { 
+                cursor: default;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            /* Migliore leggibilità su schermo piccolo */
+            .loading-title { 
+                font-size: 2.5rem !important; 
+                line-height: 1.1 !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .loading-subtitle { 
+                font-size: 1rem !important; 
+                margin-bottom: 30px !important;
+                line-height: 1.4 !important;
+            }
         }
     </style>
 </head>
@@ -751,16 +730,7 @@
         <!-- Falling Background -->
         <div class="falling-background" id="fallingBackground"></div>
         
-        <div class="floating-elements">
-            <div class="floating-element">🧝‍♀️</div>
-            <div class="floating-element">🎁</div>
-            <div class="floating-element">🧝‍♂️</div>
-            <div class="floating-element">✨</div>
-            <div class="floating-element">🎄</div>
-            <div class="floating-element">⭐</div>
-            <div class="floating-element">🔔</div>
-            <div class="floating-element">❄️</div>
-        </div>
+
         
         <div class="loading-content">
             <h1 class="loading-title">CIAO VALERY 🧝‍♀️</h1>
@@ -802,6 +772,44 @@
         <!-- Checkerboard Pattern -->
         <div class="checkerboard"></div>
 
+        <!-- Montenegro Location Section -->
+        <section style="background: var(--white); padding: 100px 0; width: 100vw; margin-left: calc(50% - 50vw);">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
+                <div style="text-align: center; margin-bottom: 60px;">
+                    <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">ECCO DOVE SI TROVA!</h2>
+                    <p style="font-size: 1.4rem; color: #666; line-height: 1.6;">Il Montenegro è un piccolo gioiello nascosto nei Balcani, tra la Croazia e l'Albania<br>Una perla selvaggia affacciata sul Mar Adriatico ✨</p>
+                </div>
+                
+                <div style="background: var(--cream); border-radius: 30px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15); margin-bottom: 60px;">
+                    <img src="https://static2-viaggi.corriereobjects.it/wp-content/uploads/2015/06/8montenegro-sveti-stefan.jpg.webp?v=1710787222"  
+                         alt="Montenegro - L'isolotto di Sveti Stefan" 
+                         style="width: 100%; height: 500px; object-fit: cover; display: block;">
+                    <div style="padding: 40px; text-align: center;">
+                        <h3 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--green-dark); margin-bottom: 15px;">ISOLOTTO DI SVETI STEFAN</h3>
+                        <p style="font-size: 1.2rem; color: #666; line-height: 1.5;">Uno degli affacci più famosi della costa del Montenegro</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                    <div style="background: var(--green-dark); color: var(--white); padding: 40px; border-radius: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🗺️</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: var(--cream);">POSIZIONE</h4>
+                        <p style="font-size: 1rem; line-height: 1.5; opacity: 0.9;">Penisola balcanica, confina con Serbia, Bosnia, Croazia e Albania</p>
+                    </div>
+                    <div style="background: var(--green-bright); color: var(--white); padding: 40px; border-radius: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">📏</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px;">DIMENSIONI</h4>
+                        <p style="font-size: 1rem; line-height: 1.5;">Superficie: 13.812 km² (come l'Abruzzo!)</p>
+                    </div>
+                    <div style="background: var(--cream); color: var(--green-dark); padding: 40px; border-radius: 20px; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">👥</div>
+                        <h4 style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 15px;">POPOLAZIONE</h4>
+                        <p style="font-size: 1rem; line-height: 1.5;">Circa 630.000 abitanti (meno di Torino!)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Why Montenegro Section -->
         <section style="background: var(--cream); padding: 100px 0; width: 100vw; margin-left: calc(50% - 50vw);">
             <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px; text-align: center;">
@@ -809,6 +817,12 @@
                 <p style="font-size: 1.2rem; color: #666; margin-bottom: 60px;">La perla nascosta dei Balcani</p>
             
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; margin-bottom: 60px;">
+                    <div style="background: var(--white); padding: 50px 40px; border-radius: 0; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                        <div style="width: 80px; height: 80px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🚗</div>
+                        <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">IL NOSTRO PRIMO ROADTRIP</h3>
+                        <p style="color: #666; font-size: 1.1rem; line-height: 1.5;">Insieme verso una destinazione non banale, alla scoperta di luoghi ancora autentici</p>
+                    </div>
+                    
                     <div style="background: var(--white); padding: 50px 40px; border-radius: 0; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
                         <div style="width: 80px; height: 80px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🏔️</div>
                         <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">NATURA SELVAGGIA</h3>
@@ -882,27 +896,27 @@
                 <!-- Legend -->
                 <div style="background: var(--cream); padding: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-radius: 20px; margin-top: -20px; position: relative; z-index: 10;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
+                        <div style="width: 30px; height: 30px; background: #E91E63; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 1 - Arrivo</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 30px; height: 30px; background: var(--green-bright); border-radius: 50%;"></div>
+                        <div style="width: 30px; height: 30px; background: #FF9800; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 2 - Vino</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
+                        <div style="width: 30px; height: 30px; background: #FFC107; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 3 - Perast</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 30px; height: 30px; background: var(--green-bright); border-radius: 50%;"></div>
+                        <div style="width: 30px; height: 30px; background: #4CAF50; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 4 - Lovćen</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
+                        <div style="width: 30px; height: 30px; background: #2196F3; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 5 - Lago</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 30px; height: 30px; background: var(--green-bright); border-radius: 50%;"></div>
+                        <div style="width: 30px; height: 30px; background: #9C27B0; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2);"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 6 - Partenza</span>
                     </div>
                 </div>
@@ -1043,34 +1057,38 @@
                 const item = document.createElement('div');
                 item.className = 'falling-item';
                 item.textContent = items[Math.floor(Math.random() * items.length)];
+                
+                // Posizionamento iniziale
                 item.style.left = Math.random() * 95 + '%';
                 item.style.top = '-100px';
                 item.style.position = 'absolute';
                 item.style.fontSize = '2rem';
                 item.style.zIndex = '2';
+                item.style.color = '#ffd700';
                 
-                const duration = 8 + Math.random() * 8;
-                const delay = Math.random() * 2;
+                // Scegli animazione casualmente
+                const animations = ['fallDown', 'fallDownSlow'];
+                const chosenAnimation = animations[Math.floor(Math.random() * animations.length)];
+                const duration = chosenAnimation === 'fallDown' ? 8 + Math.random() * 4 : 10 + Math.random() * 6;
                 
-                item.style.animationDelay = delay + 's';
-                item.style.animationDuration = duration + 's';
+                item.style.animation = `${chosenAnimation} ${duration}s linear forwards`;
                 
                 fallingContainer.appendChild(item);
                 
                 // Rimuovi l'elemento dopo l'animazione
                 setTimeout(() => {
-                    if (item.parentNode) {
+                    if (item && item.parentNode) {
                         item.parentNode.removeChild(item);
                     }
-                }, (duration + delay + 2) * 1000);
+                }, duration * 1000 + 1000);
             }
             
-            // Crea items ogni 500ms per 55 secondi
+            // Crea items ogni 500ms per 50 secondi
             const interval = setInterval(createFallingItem, 500);
             
             setTimeout(() => {
                 clearInterval(interval);
-            }, 55000);
+            }, 50000);
         }
 
         // Loading Screen Management
@@ -1089,7 +1107,7 @@
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
                 }, 1000);
-            }, 50000); // Loading per 50 secondi
+            }, 45000); // Loading per 45 secondi
         });
 
         document.addEventListener('DOMContentLoaded', function() {
