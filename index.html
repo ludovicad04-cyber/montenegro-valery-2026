@@ -34,7 +34,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: var(--color-primary);
+            background: var(--green-dark);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -49,24 +49,29 @@
 
         .loading-content {
             text-align: center;
-            color: white;
-            font-family: var(--font-family);
-            max-width: 600px;
+            color: var(--white);
+            font-family: var(--font-main);
+            max-width: 800px;
             padding: 40px;
         }
 
         .loading-title {
-            font-size: 2.5em;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: var(--font-display);
+            font-size: 6rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            color: var(--cream);
         }
 
         .loading-subtitle {
-            font-size: 1.2em;
-            font-weight: 300;
+            font-size: 1.5rem;
+            font-weight: 400;
             margin-bottom: 50px;
             opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         /* Car Animation */
@@ -276,7 +281,7 @@
         .hero-section {
             background: var(--green-dark);
             color: var(--white);
-            padding: 0;
+            padding: 100px 40px;
             position: relative;
             min-height: 70vh;
             display: flex;
@@ -319,13 +324,13 @@
 
         /* Checkerboard Pattern */
         .checkerboard {
-            height: 60px;
+            height: 40px;
             background: repeating-linear-gradient(
                 90deg,
                 var(--green-dark) 0px,
-                var(--green-dark) 30px,
-                var(--white) 30px,
-                var(--white) 60px
+                var(--green-dark) 20px,
+                var(--white) 20px,
+                var(--white) 40px
             );
         }
 
@@ -669,8 +674,8 @@
         </div>
         
         <div class="loading-content">
-            <h1 class="loading-title">Preparando la tua sorpresa...</h1>
-            <p class="loading-subtitle">Un regalo speciale ti sta aspettando 💕</p>
+            <h1 class="loading-title">MONTENEGRO</h1>
+            <p class="loading-subtitle">Caricando l'avventura...</p>
             
             <div class="car-container">
                 <div class="road">
@@ -708,8 +713,8 @@
         <div class="checkerboard"></div>
 
         <!-- Why Montenegro Section -->
-        <section style="background: var(--cream); padding: 100px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+        <section style="background: var(--cream); padding: 100px 0;">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px; text-align: center;">
                 <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">PERCHÉ MONTENEGRO?</h2>
                 <p style="font-size: 1.2rem; color: #666; margin-bottom: 60px;">La perla nascosta dei Balcani</p>
             
@@ -743,28 +748,38 @@
         <!-- Checkerboard -->
         <div class="checkerboard"></div>
 
-        <section class="trip-details">
-            <div class="detail-item">
-                <div class="detail-title">📅 Date</div>
-                <div class="detail-value">1 - 6 Aprile 2026</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-title">⏳ Durata</div>
-                <div class="detail-value">6 Giorni / 5 Notti</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-title">📍 Pernottamenti</div>
-                <div class="detail-value">Kotor (3) + Budva (2)</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-title">🚗 Distanza Stimata</div>
-                <div class="detail-value">~550 km</div>
+        <!-- Trip Overview -->
+        <section style="background: var(--green-dark); color: var(--white); padding: 80px 0;">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
+                <h2 style="font-family: var(--font-display); font-size: 3rem; font-weight: 900; text-align: center; margin-bottom: 50px; text-transform: uppercase; color: var(--cream);">DETTAGLI DEL VIAGGIO</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">📅</div>
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; text-transform: uppercase;">Date</h3>
+                        <p style="font-size: 1.1rem; opacity: 0.9;">1 - 6 Aprile 2026</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">⏳</div>
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; text-transform: uppercase;">Durata</h3>
+                        <p style="font-size: 1.1rem; opacity: 0.9;">6 Giorni / 5 Notti</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">📍</div>
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; text-transform: uppercase;">Pernottamenti</h3>
+                        <p style="font-size: 1.1rem; opacity: 0.9;">Kotor (3) + Budva (2)</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🚗</div>
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; text-transform: uppercase;">Distanza</h3>
+                        <p style="font-size: 1.1rem; opacity: 0.9;">~550 km totali</p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Map Section -->
-        <section style="background: var(--white); padding: 100px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto;">
+        <section style="background: var(--white); padding: 100px 0;">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
                 <div style="text-align: center; margin-bottom: 60px;">
                     <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">LA MAPPA</h2>
                     <p style="font-size: 1.2rem; color: #666;">Il nostro percorso attraverso il Montenegro</p>
@@ -775,7 +790,7 @@
                 </div>
 
                 <!-- Legend -->
-                <div style="background: var(--cream); padding: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div style="background: #f8f9fa; padding: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-top: 4px solid var(--green-dark);">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
                         <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 1 - Arrivo</span>
