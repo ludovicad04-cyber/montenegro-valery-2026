@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
           integrity="sha2014-zcbZ+P7MD4h7V74F7W7x7/45+K/9W+A7e7O00K+G2/7N+T7f3Y/027A" 
           crossorigin=""/>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         /* Stili Generali e Reset */
         :root {
-            --color-primary: #1a5f3a; /* Verde scuro principale */
-            --color-secondary: #0d4d20; /* Verde molto scuro */
-            --color-accent: #2dd55b; /* Verde brillante */
-            --color-light: #f0fff4; /* Verde chiarissimo */
-            --color-cream: #fef7ed; /* Crema */
-            --color-bg: #ffffff;
-            --font-family: 'Fredoka', sans-serif;
+            --green-dark: #1a472a;
+            --green-bright: #22c55e;
+            --cream: #fef7ed;
+            --white: #ffffff;
+            --black: #000000;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Fredoka', cursive;
         }
 
         * {
@@ -208,10 +209,10 @@
 
         /* Main Content */
         body {
-            font-family: var(--font-family);
-            background: var(--color-bg);
-            line-height: 1.6;
-            color: #333;
+            font-family: var(--font-main);
+            background: var(--white);
+            line-height: 1.4;
+            color: var(--black);
             min-height: 100vh;
             margin: 0;
             padding: 0;
@@ -273,53 +274,59 @@
 
         /* Hero Section */
         .hero-section {
-            background: var(--color-primary);
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
+            background: var(--green-dark);
+            color: var(--white);
+            padding: 0;
             position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.08) 15px, rgba(255,255,255,0.08) 30px);
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
+            text-align: center;
+            z-index: 10;
         }
 
         .hero-title {
-            font-size: 5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-family: var(--font-display);
+            font-size: 8rem;
+            font-weight: 900;
+            margin: 0;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -2px;
+            line-height: 0.8;
+            color: var(--cream);
         }
 
         .hero-subtitle {
-            font-size: 1.8rem;
+            font-family: var(--font-main);
+            font-size: 1.5rem;
             font-weight: 400;
-            margin-bottom: 20px;
-            opacity: 0.95;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0.9;
         }
 
         /* Checkerboard Pattern */
-        .checkerboard-pattern {
-            height: 50px;
-            background-image: 
-                repeating-linear-gradient(90deg, var(--color-primary) 0px, var(--color-primary) 25px, white 25px, white 50px);
+        .checkerboard {
+            height: 60px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--green-dark) 0px,
+                var(--green-dark) 30px,
+                var(--white) 30px,
+                var(--white) 60px
+            );
         }
 
         /* Section Styles */
@@ -692,51 +699,49 @@
         <section class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">MONTENEGRO</h1>
-                <h2 class="hero-subtitle">Roadtrip per Valery 2026</h2>
-                <p style="font-size: 1.2rem; opacity: 0.9; margin-top: 20px;">🍷 Un'avventura attraverso natura selvaggia, storia millenaria e sapori autentici</p>
+                <p class="hero-subtitle">ROADTRIP 2026</p>
+                <p class="hero-description">Un'avventura epica per Valery attraverso natura selvaggia e sapori autentici</p>
             </div>
         </section>
         
         <!-- Checkerboard Pattern -->
-        <div class="checkerboard-pattern"></div>
+        <div class="checkerboard"></div>
 
-        <!-- Intro Section -->
-        <section class="section-light">
-            <div class="container">
-                <div style="text-align: center; margin-bottom: 50px;">
-                    <h2 style="color: var(--color-primary); font-size: 3rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">Perché Montenegro?</h2>
-                    <p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 0 auto;">La "Perla dei Balcani" ti aspetta con tesori nascosti 💎</p>
-                </div>
+        <!-- Why Montenegro Section -->
+        <section style="background: var(--cream); padding: 100px 20px;">
+            <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+                <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">PERCHÉ MONTENEGRO?</h2>
+                <p style="font-size: 1.2rem; color: #666; margin-bottom: 60px;">La perla nascosta dei Balcani</p>
             
-                <div class="intro-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
-                    <div style="background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: center; border: 3px solid var(--color-light);">
-                        <div style="font-size: 3em; margin-bottom: 20px;">🏔️</div>
-                        <h3 style="color: var(--color-primary); font-size: 1.4em; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Natura Selvaggia</h3>
-                        <p style="color: #666; font-size: 1rem; line-height: 1.6;">Dalle vette alpine alle baie turchesi, tutto in pochi chilometri</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; margin-bottom: 60px;">
+                    <div style="background: var(--white); padding: 50px 40px; border-radius: 0; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                        <div style="width: 80px; height: 80px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🏔️</div>
+                        <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">NATURA SELVAGGIA</h3>
+                        <p style="color: #666; font-size: 1.1rem; line-height: 1.5;">Dalle vette alpine alle baie turchesi, tutto in pochi chilometri</p>
                     </div>
                     
-                    <div style="background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: center; border: 3px solid var(--color-light);">
-                        <div style="font-size: 3em; margin-bottom: 20px;">🏛️</div>
-                        <h3 style="color: var(--color-primary); font-size: 1.4em; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Storia Autentica</h3>
-                        <p style="color: #666; font-size: 1rem; line-height: 1.6;">Città UNESCO, fortezze medievali e tradizioni millenarie</p>
+                    <div style="background: var(--white); padding: 50px 40px; border-radius: 0; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                        <div style="width: 80px; height: 80px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🏛️</div>
+                        <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">STORIA AUTENTICA</h3>
+                        <p style="color: #666; font-size: 1.1rem; line-height: 1.5;">Città UNESCO, fortezze medievali e tradizioni millenarie</p>
                     </div>
                     
-                    <div style="background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); text-align: center; border: 3px solid var(--color-light);">
-                        <div style="font-size: 3em; margin-bottom: 20px;">🍷</div>
-                        <h3 style="color: var(--color-primary); font-size: 1.4em; font-weight: 600; margin-bottom: 15px; text-transform: uppercase;">Sapori Unici</h3>
-                        <p style="color: #666; font-size: 1rem; line-height: 1.6;">Vini locali, pesce di lago e cucina mediterranea autentica</p>
+                    <div style="background: var(--white); padding: 50px 40px; border-radius: 0; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                        <div style="width: 80px; height: 80px; background: var(--green-bright); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">🍷</div>
+                        <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">SAPORI UNICI</h3>
+                        <p style="color: #666; font-size: 1.1rem; line-height: 1.5;">Vini locali, pesce di lago e cucina mediterranea autentica</p>
                     </div>
                 </div>
             
-                <div style="background: var(--color-primary); color: white; padding: 50px 40px; border-radius: 25px; text-align: center; position: relative; overflow: hidden; margin-top: 40px;">
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);"></div>
-                    <p style="font-style: italic; font-size: 1.4rem; margin: 0; position: relative; z-index: 2; font-weight: 300; line-height: 1.6;">"Il Montenegro è un libro di fiabe geografiche: ogni pagina rivela paesaggi incredibili. In 6 giorni vivremo un'avventura dal mare cristallino alle montagne selvagge." ✨</p>
+                <div style="background: var(--green-dark); color: var(--white); padding: 60px 50px; text-align: center; position: relative;">
+                    <h3 style="font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; margin-bottom: 30px; text-transform: uppercase; color: var(--cream);">6 GIORNI EPICI</h3>
+                    <p style="font-size: 1.3rem; line-height: 1.6; margin: 0; opacity: 0.9;">"Dal mare cristallino alle montagne selvagge: un'avventura che cambierà tutto" ✨</p>
                 </div>
             </div>
         </section>
-        
-        <!-- Checkerboard Pattern -->
-        <div class="checkerboard-pattern"></div>
+
+        <!-- Checkerboard -->
+        <div class="checkerboard"></div>
 
         <section class="trip-details">
             <div class="detail-item">
