@@ -762,39 +762,50 @@
             </div>
         </section>
 
-        <section class="itinerary-section">
-            <div class="itinerary-header">
-                <h2>Il nostro percorso</h2>
-            </div>
-            
-            <div id="map"></div>
+        <!-- Map Section -->
+        <section style="background: var(--white); padding: 100px 20px;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div style="text-align: center; margin-bottom: 60px;">
+                    <h2 style="font-family: var(--font-display); font-size: 4rem; font-weight: 900; color: var(--green-dark); margin-bottom: 20px; text-transform: uppercase;">LA MAPPA</h2>
+                    <p style="font-size: 1.2rem; color: #666;">Il nostro percorso attraverso il Montenegro</p>
+                </div>
 
-            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #15803d, #15803ddd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 1 - Arrivo</span>
+                <div style="border: 8px solid var(--green-dark); margin-bottom: 40px;">
+                    <div id="map"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #166534, #166534dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 2 - Vino</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #16a34a, #16a34add); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 3 - Perast</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #22c55e, #22c55edd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 4 - Lovćen</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #16a34a, #16a34add); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 5 - Lago</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #059669, #059669dd); border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                    <span style="font-family: 'Fredoka', cursive; font-weight: 500; color: #333;">Giorno 6 - Partenza</span>
+
+                <!-- Legend -->
+                <div style="background: var(--cream); padding: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 1 - Arrivo</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 30px; height: 30px; background: var(--green-bright); border-radius: 50%;"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 2 - Vino</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 3 - Perast</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 30px; height: 30px; background: var(--green-bright); border-radius: 50%;"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 4 - Lovćen</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 30px; height: 30px; background: var(--green-dark); border-radius: 50%;"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 5 - Lago</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 30px; height: 30px; background: var(--green-bright); border-radius: 50%;"></div>
+                        <span style="font-family: var(--font-main); font-weight: 600; color: var(--green-dark); text-transform: uppercase; font-size: 0.9rem;">Giorno 6 - Partenza</span>
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Checkerboard -->
+        <div class="checkerboard"></div>
 
             <div class="info-box travel-info" style="margin-bottom: 25px;">
                 🚗 <strong>Percorso Totale:</strong> Podgorica → Kotor (3 notti) → Budva (2 notti) → Podgorica
