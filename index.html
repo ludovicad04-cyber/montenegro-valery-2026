@@ -40,6 +40,32 @@
             align-items: center;
             z-index: 10000;
             transition: opacity 1s ease-out;
+            overflow: hidden;
+        }
+
+        .falling-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .falling-item {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .falling-item:nth-child(odd) {
+            animation: fallDown 8s linear infinite;
+        }
+
+        .falling-item:nth-child(even) {
+            animation: fallDownSlow 12s linear infinite;
         }
 
         .loading-screen.hidden {
@@ -53,6 +79,12 @@
             font-family: var(--font-main);
             max-width: 800px;
             padding: 40px;
+            position: relative;
+            z-index: 10;
+            background: rgba(26, 71, 42, 0.7);
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
         .loading-title {
@@ -172,6 +204,7 @@
             height: 100%;
             pointer-events: none;
             opacity: 0.6;
+            z-index: 5;
         }
 
         .floating-element {
@@ -556,6 +589,40 @@
             0%, 100% { opacity: 0.6; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.2); }
         }
+
+        @keyframes fallDown {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0.7;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fallDownSlow {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0.6;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(100vh) rotate(180deg);
+                opacity: 0;
+            }
+        }
         
         .day-title {
             font-size: 1.2em;
@@ -691,6 +758,9 @@
 <body>
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
+        <!-- Falling Background -->
+        <div class="falling-background" id="fallingBackground"></div>
+        
         <div class="floating-elements">
             <div class="floating-element">🧝‍♀️</div>
             <div class="floating-element">🎁</div>
@@ -975,8 +1045,41 @@
             integrity="sha2014-zcbZ+P7MD4h7V74F7W7x7/45+K/9W+A7e7O00K+G2/7N+T7f3Y/027A"
             crossorigin=""></script>
     <script>
+        // Falling Items Generation
+        function createFallingItems() {
+            const fallingContainer = document.getElementById('fallingBackground');
+            const items = ['🎁', '🧝‍♀️', '🧝‍♂️', '🎄', '⭐', '🔔', '❄️', '🎀', '🧸', '🍪'];
+            
+            function createFallingItem() {
+                const item = document.createElement('div');
+                item.className = 'falling-item';
+                item.textContent = items[Math.floor(Math.random() * items.length)];
+                item.style.left = Math.random() * 100 + '%';
+                item.style.animationDelay = Math.random() * 2 + 's';
+                item.style.animationDuration = (8 + Math.random() * 8) + 's';
+                fallingContainer.appendChild(item);
+                
+                // Rimuovi l'elemento dopo l'animazione
+                setTimeout(() => {
+                    if (item.parentNode) {
+                        item.parentNode.removeChild(item);
+                    }
+                }, 20000);
+            }
+            
+            // Crea items ogni 500ms per 55 secondi
+            const interval = setInterval(createFallingItem, 500);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+            }, 55000);
+        }
+
         // Loading Screen Management
         window.addEventListener('load', function() {
+            // Inizia la pioggia di regali
+            createFallingItems();
+            
             setTimeout(() => {
                 const loadingScreen = document.getElementById('loadingScreen');
                 const mainContent = document.getElementById('mainContent');
@@ -988,7 +1091,7 @@
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
                 }, 1000);
-            }, 40000); // Loading per 40 secondi
+            }, 50000); // Loading per 50 secondi
         });
 
         document.addEventListener('DOMContentLoaded', function() {
